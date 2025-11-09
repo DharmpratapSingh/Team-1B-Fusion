@@ -8,8 +8,13 @@ import calendar
 import json
 import logging
 import os
+import re
+import time
+import hashlib
+import uuid
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, Dict, List, Tuple, Set
+from datetime import datetime, timedelta
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import (
@@ -24,13 +29,67 @@ from mcp.types import (
 import duckdb
 from functools import lru_cache
 import threading
+from queue import Queue, Empty, Full
+from contextlib import contextmanager
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger("climategpt")
+# ---------------------------------------------------------------------
+# Logging Infrastructure (from mcp_server.py)
+# ---------------------------------------------------------------------
+def _setup_logging():
+    """Setup structured logging with JSON format for production."""
+    log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+    log_format = os.getenv("LOG_FORMAT", "json")  # "json" or "text"
+
+    # Create logger
+    logger = logging.getLogger("climategpt_mcp")
+    logger.setLevel(getattr(logging, log_level, logging.INFO))
+
+    # Remove existing handlers
+    logger.handlers.clear()
+
+    # Create formatter
+    if log_format == "json":
+        class JSONFormatter(logging.Formatter):
+            def format(self, record):
+                log_entry = {
+                    "timestamp": datetime.utcnow().isoformat() + "Z",
+                    "level": record.levelname,
+                    "logger": record.name,
+                    "message": record.getMessage(),
+                    "module": record.module,
+                    "function": record.funcName,
+                    "line": record.lineno,
+                }
+                if hasattr(record, "request_id"):
+                    log_entry["request_id"] = record.request_id
+                if hasattr(record, "query_context"):
+                    log_entry["query_context"] = record.query_context
+                if record.exc_info:
+                    log_entry["exception"] = self.formatException(record.exc_info)
+                return json.dumps(log_entry)
+
+        formatter = JSONFormatter()
+    else:
+        formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
+
+    # Console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+
+    # File handler (optional)
+    log_file = os.getenv("LOG_FILE")
+    if log_file:
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+
+    return logger
+
+logger = _setup_logging()
 
 # Initialize MCP server
 app = Server("climategpt")
@@ -64,9 +123,901 @@ if first_file and first_file.get("path", "").startswith("duckdb://"):
 else:
     DB_PATH = _resolve_db_path("data/warehouse/climategpt.duckdb")
 
-# Connection pooling for DuckDB
-from queue import Queue, Empty, Full
-from contextlib import contextmanager
+# ---------------------------------------------------------------------
+# Security and Input Validation (from mcp_server.py)
+# ---------------------------------------------------------------------
+# Project root for path resolution
+_PROJECT_ROOT = Path(__file__).parent
+
+# Valid characters for identifiers (file_id, column names)
+_IDENTIFIER_PATTERN = re.compile(r'^[a-zA-Z0-9_\-\.]+$')
+_MAX_QUERY_COMPLEXITY = {
+    "max_columns": 50,
+    "max_filters": 20,
+    "max_list_items": 100,
+    "max_string_length": 500,
+    "max_query_size": 10000,  # bytes
+}
+
+# Config defaults (env-driven)
+ASSIST_DEFAULT = os.getenv("ASSIST_DEFAULT", "true").lower() == "true"
+PROXY_DEFAULT = os.getenv("PROXY_DEFAULT", "false").lower() == "true"
+PROXY_MAX_K_DEFAULT = int(os.getenv("PROXY_MAX_K", "3") or 3)
+PROXY_RADIUS_KM_DEFAULT = int(os.getenv("PROXY_RADIUS_KM", "150") or 150)
+
+# ---------------------------------------------------------------------
+# File ID resolver (for future alias support)
+# ---------------------------------------------------------------------
+def _resolve_file_id(fid: str) -> str:
+    """Resolve file_id, potentially applying aliases in the future."""
+    # Aliases removed - they referenced non-existent .expanded datasets
+    # Keep function for future alias support if needed
+    return fid
+
+# ---------------------------------------------------------------------
+# Enhanced Validation Functions (from mcp_server.py)
+# ---------------------------------------------------------------------
+def _validate_file_id_enhanced(file_id: str) -> Tuple[bool, Optional[str]]:
+    """Validate file_id format and prevent path traversal."""
+    if not file_id or not isinstance(file_id, str):
+        return False, "file_id must be a non-empty string"
+
+    if len(file_id) > 200:
+        return False, "file_id too long (max 200 characters)"
+
+    # Prevent path traversal
+    if '..' in file_id or '/' in file_id or '\\' in file_id:
+        return False, "file_id contains invalid characters"
+
+    # Check for valid identifier pattern
+    if not _IDENTIFIER_PATTERN.match(file_id):
+        return False, "file_id contains invalid characters (only alphanumeric, _, -, . allowed)"
+
+    return True, None
+
+
+def _validate_column_name_enhanced(col: str) -> Tuple[bool, Optional[str]]:
+    """Validate column name to prevent SQL injection."""
+    if not col or not isinstance(col, str):
+        return False, "Column name must be a non-empty string"
+
+    if len(col) > 100:
+        return False, "Column name too long (max 100 characters)"
+
+    # Whitelist approach - only allow safe characters
+    if not _IDENTIFIER_PATTERN.match(col):
+        return False, "Column name contains invalid characters"
+
+    # Prevent SQL keywords (basic check)
+    sql_keywords = {'select', 'from', 'where', 'insert', 'update', 'delete',
+                    'drop', 'create', 'alter', 'exec', 'execute', 'union'}
+    if col.lower() in sql_keywords:
+        return False, f"Column name cannot be SQL keyword: {col}"
+
+    return True, None
+
+
+def _validate_filter_value(value: Any, filter_type: str) -> Tuple[bool, Optional[str]]:
+    """Validate filter values for safety and size limits."""
+    if filter_type == "list" and isinstance(value, list):
+        if len(value) > _MAX_QUERY_COMPLEXITY["max_list_items"]:
+            return False, f"Filter list too large (max {_MAX_QUERY_COMPLEXITY['max_list_items']} items)"
+        for item in value:
+            if isinstance(item, str) and len(item) > _MAX_QUERY_COMPLEXITY["max_string_length"]:
+                return False, f"Filter list item too long (max {_MAX_QUERY_COMPLEXITY['max_string_length']} chars)"
+
+    if isinstance(value, str):
+        if len(value) > _MAX_QUERY_COMPLEXITY["max_string_length"]:
+            return False, f"Filter value too long (max {_MAX_QUERY_COMPLEXITY['max_string_length']} chars)"
+        # Check for potential injection patterns
+        if re.search(r'[;\'"\\]', value):
+            return False, "Filter value contains potentially dangerous characters"
+
+    return True, None
+
+
+# ---------------------------------------------------------------------
+# Error handling helpers (from mcp_server.py)
+# ---------------------------------------------------------------------
+def _parse_duckdb_column_error(error_str: str) -> Optional[Tuple[List[str], List[str]]]:
+    """
+    Parse DuckDB error to detect invalid column errors.
+    Returns (bad_columns, candidate_columns) if it's a column error, None otherwise.
+
+    Example: "Binder Error: Referenced column \"x\" not found...\nCandidate bindings: \"a\", \"b\""
+    """
+    error_lower = error_str.lower()
+
+    # Check if it's a column not found error
+    if "referenced column" not in error_lower or "not found" not in error_lower:
+        return None
+
+    # Extract column names from error message
+    # Find quoted column names (the ones that don't exist)
+    missing_pattern = r'Referenced column\s+"([^"]+)"'
+    missing_match = re.search(missing_pattern, error_str, re.IGNORECASE)
+    if not missing_match:
+        return None
+
+    bad_columns = [missing_match.group(1)]
+
+    # Extract candidate bindings
+    candidate_pattern = r'Candidate bindings:\s*"([^"]+)"(?:\s*,\s*"([^"]+)")*'
+    candidate_match = re.search(candidate_pattern, error_str)
+    candidate_columns = []
+    if candidate_match:
+        # Get all quoted values after "Candidate bindings:"
+        all_matches = re.findall(r'"([^"]+)"', error_str[error_str.find("Candidate bindings:"):])
+        candidate_columns = all_matches if all_matches else []
+
+    return bad_columns, candidate_columns
+
+
+def _error_response(code: str, detail: str, hint: Optional[str] = None,
+                   context: Optional[Dict[str, Any]] = None,
+                   suggestions: Optional[List[str]] = None) -> Dict[str, Any]:
+    """
+    Create a standardized error response with enhanced context.
+
+    Args:
+        code: Error code (e.g., "file_not_found", "read_failed")
+        detail: Detailed error message
+        hint: Optional hint for resolving the error
+        context: Additional context about the error
+        suggestions: List of suggested actions
+
+    Returns:
+        Standardized error dict
+    """
+    response: Dict[str, Any] = {
+        "error": code,
+        "detail": detail,
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+    }
+    if hint:
+        response["hint"] = hint
+    if context:
+        response["context"] = context
+    if suggestions:
+        response["suggestions"] = suggestions
+
+    return response
+
+
+# ---------------------------------------------------------------------
+# Query Validation and Intent Detection (from mcp_server.py)
+# ---------------------------------------------------------------------
+def _parse_temporal_coverage(coverage_str: str) -> Optional[Tuple[int, int]]:
+    """Parse temporal coverage string like '2000-2023' into (start, end)."""
+    if not coverage_str or '-' not in coverage_str:
+        return None
+    try:
+        parts = coverage_str.split('-')
+        if len(parts) == 2:
+            return (int(parts[0]), int(parts[1]))
+    except (ValueError, IndexError):
+        pass
+    return None
+
+
+def _validate_query_complexity(
+    select: List[str],
+    where: Dict[str, Any],
+    group_by: List[str],
+    order_by: Optional[str] = None
+) -> Tuple[bool, Optional[str], Optional[Dict[str, Any]]]:
+    """Validate query complexity to prevent DoS."""
+    issues = []
+
+    # Check column count
+    if len(select) > _MAX_QUERY_COMPLEXITY["max_columns"]:
+        issues.append(f"Too many columns in select (max {_MAX_QUERY_COMPLEXITY['max_columns']})")
+
+    # Check filter count
+    if len(where) > _MAX_QUERY_COMPLEXITY["max_filters"]:
+        issues.append(f"Too many filters (max {_MAX_QUERY_COMPLEXITY['max_filters']})")
+
+    # Check group_by count
+    if len(group_by) > _MAX_QUERY_COMPLEXITY["max_columns"]:
+        issues.append(f"Too many group_by columns (max {_MAX_QUERY_COMPLEXITY['max_columns']})")
+
+    # Validate all column names
+    all_columns = set(select) | set(group_by)
+    if order_by:
+        order_col = order_by.split()[0]
+        all_columns.add(order_col)
+
+    for col in all_columns:
+        valid, error = _validate_column_name_enhanced(col)
+        if not valid:
+            issues.append(f"Invalid column name '{col}': {error}")
+
+    # Validate filter values
+    for key, value in where.items():
+        if isinstance(value, dict):
+            if "in" in value and isinstance(value["in"], list):
+                valid, error = _validate_filter_value(value["in"], "list")
+                if not valid:
+                    issues.append(f"Invalid filter value for '{key}': {error}")
+        else:
+            valid, error = _validate_filter_value(value, "single")
+            if not valid:
+                issues.append(f"Invalid filter value for '{key}': {error}")
+
+    if issues:
+        return False, "; ".join(issues), {
+            "max_columns": _MAX_QUERY_COMPLEXITY["max_columns"],
+            "max_filters": _MAX_QUERY_COMPLEXITY["max_filters"],
+        }
+
+    return True, None, None
+
+
+# ---------------------------------------------------------------------
+# Phase 3: Advanced Query Features (from mcp_server.py)
+# ---------------------------------------------------------------------
+
+def _validate_aggregation_function(func: str) -> Tuple[bool, Optional[str]]:
+    """Validate aggregation function name."""
+    valid_functions = {"sum", "avg", "mean", "min", "max", "count", "distinct", "std", "stddev", "variance"}
+    if func.lower() not in valid_functions:
+        return False, f"Invalid aggregation function: {func}. Allowed: {', '.join(sorted(valid_functions))}"
+    return True, None
+
+
+def _build_aggregation_sql(aggregations: Dict[str, str], select: List[str]) -> Tuple[str, List[str]]:
+    """
+    Build SQL for aggregations.
+    Returns (SQL fragment, list of aggregated columns for SELECT).
+    """
+    if not aggregations:
+        return "", select if select else []
+
+    agg_parts = []
+    agg_cols = []
+
+    for col, func in aggregations.items():
+        # Validate column name (basic validation - schema check happens later)
+        valid_col, col_error = _validate_column_name_enhanced(col)
+        if not valid_col:
+            raise ValueError(f"Invalid column in aggregation: {col_error}")
+
+        # Validate function
+        valid_func, func_error = _validate_aggregation_function(func)
+        if not valid_func:
+            raise ValueError(func_error)
+
+        func_upper = func.upper()
+        # Quote column name for safety
+        quoted_col = f'"{col}"'
+        if func_upper == "DISTINCT":
+            agg_parts.append(f"COUNT(DISTINCT {quoted_col}) AS \"{col}_distinct_count\"")
+            agg_cols.append(f"{col}_distinct_count")
+        elif func_upper == "COUNT":
+            agg_parts.append(f"COUNT({quoted_col}) AS \"{col}_count\"")
+            agg_cols.append(f"{col}_count")
+        elif func_upper in ("AVG", "MEAN"):
+            agg_parts.append(f"AVG({quoted_col}) AS \"{col}_avg\"")
+            agg_cols.append(f"{col}_avg")
+        elif func_upper == "SUM":
+            agg_parts.append(f"SUM({quoted_col}) AS \"{col}_sum\"")
+            agg_cols.append(f"{col}_sum")
+        elif func_upper == "MIN":
+            agg_parts.append(f"MIN({quoted_col}) AS \"{col}_min\"")
+            agg_cols.append(f"{col}_min")
+        elif func_upper == "MAX":
+            agg_parts.append(f"MAX({quoted_col}) AS \"{col}_max\"")
+            agg_cols.append(f"{col}_max")
+        elif func_upper in ("STD", "STDDEV"):
+            agg_parts.append(f"STDDEV({quoted_col}) AS \"{col}_stddev\"")
+            agg_cols.append(f"{col}_stddev")
+        elif func_upper == "VARIANCE":
+            agg_parts.append(f"VAR({quoted_col}) AS \"{col}_variance\"")
+            agg_cols.append(f"{col}_variance")
+
+    # Combine with regular select columns
+    all_cols = (select if select else []) + agg_cols
+    sql_fragment = ", ".join(agg_parts) if agg_parts else ""
+
+    return sql_fragment, all_cols
+
+
+def _build_having_sql(having: Dict[str, Any]) -> Tuple[str, list]:
+    """
+    Build SQL HAVING clause for post-aggregation filtering.
+    Similar to WHERE but for aggregated columns.
+    """
+    if not having:
+        return "", []
+
+    clauses = []
+    params = []
+
+    for key, val in having.items():
+        # Validate column name (can be aggregated column alias)
+        valid, error = _validate_column_name_enhanced(key)
+        if not valid:
+            raise ValueError(f"Invalid column in HAVING: {error}")
+
+        if isinstance(val, dict):
+            if "in" in val:
+                placeholders = ", ".join(["?" for _ in val["in"]])
+                clauses.append(f'"{key}" IN ({placeholders})')
+                params.extend(val["in"])
+            elif "between" in val:
+                lo, hi = val["between"]
+                clauses.append(f'"{key}" BETWEEN ? AND ?')
+                params.extend([lo, hi])
+            elif "gte" in val:
+                clauses.append(f'"{key}" >= ?')
+                params.append(val["gte"])
+            elif "lte" in val:
+                clauses.append(f'"{key}" <= ?')
+                params.append(val["lte"])
+            elif "gt" in val:
+                clauses.append(f'"{key}" > ?')
+                params.append(val["gt"])
+            elif "lt" in val:
+                clauses.append(f'"{key}" < ?')
+                params.append(val["lt"])
+            elif "contains" in val:
+                clauses.append(f'CAST("{key}" AS VARCHAR) LIKE ?')
+                params.append(f"%{val['contains']}%")
+        else:
+            # Equality
+            clauses.append(f'"{key}" = ?')
+            params.append(val)
+
+    if not clauses:
+        return "", []
+    return " HAVING " + " AND ".join(clauses), params
+
+
+# ---------------------------------------------------------------------
+# Phase 3.5: DuckDB Query Optimizations (from mcp_server.py)
+# ---------------------------------------------------------------------
+
+def _duckdb_pushdown(
+    file_meta: Dict[str, Any],
+    select: List[str],
+    where: Dict[str, Any],
+    group_by: List[str],
+    order_by: Optional[str],
+    limit: Optional[int],
+    offset: Optional[int] = 0,
+    aggregations: Optional[Dict[str, str]] = None,
+    having: Optional[Dict[str, Any]] = None
+) -> Optional[List[Dict[str, Any]]]:
+    """
+    Pushdown query to DuckDB for maximum performance.
+    Returns list of row dicts, or None if not DuckDB engine.
+    """
+    if file_meta.get("engine") != "duckdb":
+        return None
+
+    uri = file_meta.get("path")
+    if not uri or not uri.startswith("duckdb://"):
+        return None
+
+    db_path, _, table = uri[len("duckdb://"):].partition("#")
+    if not table:
+        return None
+
+    # Security: Validate table name
+    valid_table, table_error = _validate_column_name_enhanced(table)
+    if not valid_table:
+        raise ValueError(f"Invalid table name in pushdown: {table_error}")
+
+    # Security: Validate all column names
+    all_cols = set(select) | set(group_by)
+    if order_by:
+        order_col = order_by.split()[0]
+        # For aggregated columns, the order_by might use the aggregated name
+        if aggregations:
+            is_agg_col = False
+            for orig_col, func in aggregations.items():
+                func_upper = func.upper()
+                expected_names = {
+                    "SUM": f"{orig_col}_sum",
+                    "AVG": f"{orig_col}_avg", "MEAN": f"{orig_col}_avg",
+                    "COUNT": f"{orig_col}_count",
+                    "DISTINCT": f"{orig_col}_distinct_count",
+                    "MIN": f"{orig_col}_min",
+                    "MAX": f"{orig_col}_max"
+                }
+                if func_upper in expected_names and order_col == expected_names[func_upper]:
+                    is_agg_col = True
+                    break
+                elif order_col == orig_col:
+                    is_agg_col = True
+                    break
+            if not is_agg_col:
+                all_cols.add(order_col)
+        else:
+            all_cols.add(order_col)
+
+    for col in all_cols:
+        valid, error = _validate_column_name_enhanced(col)
+        if not valid:
+            raise ValueError(f"Invalid column name in pushdown: {error}")
+
+    # Build SELECT clause with aggregations
+    if aggregations:
+        agg_sql, agg_cols = _build_aggregation_sql(aggregations, select)
+        if agg_sql:
+            group_select_cols = [f'"{col}"' for col in group_by] if group_by else []
+            select_cols = [f'"{col}"' for col in select] if select else []
+            all_select_cols = list(dict.fromkeys(group_select_cols + select_cols))
+            if all_select_cols and agg_sql:
+                cols = ", ".join(all_select_cols) + ", " + agg_sql
+            elif agg_sql:
+                cols = agg_sql
+                if group_by and not select:
+                    group_cols = ", ".join([f'"{col}"' for col in group_by])
+                    cols = group_cols + ", " + agg_sql if cols else group_cols
+            else:
+                cols = ", ".join(all_select_cols) if all_select_cols else "*"
+        else:
+            cols = ", ".join([f'"{col}"' for col in select]) if select else "*"
+    else:
+        cols = ", ".join([f'"{col}"' for col in select]) if select else "*"
+
+    where_sql, params = _build_where_sql(where)
+
+    if group_by:
+        quoted_cols = [f'"{col}"' for col in group_by]
+        group_sql = f" GROUP BY {', '.join(quoted_cols)}"
+    else:
+        group_sql = ""
+
+    # Add HAVING clause
+    having_sql, having_params = _build_having_sql(having) if having else ("", [])
+    params.extend(having_params)
+
+    order_sql = ""
+    if order_by:
+        parts = order_by.split()
+        col = parts[0]
+        dirc = parts[1] if len(parts) > 1 else ""
+
+        # If using aggregations, check if order_by column needs aggregated name
+        if aggregations:
+            for orig_col, func in aggregations.items():
+                func_upper = func.upper()
+                expected_names = {
+                    "SUM": f"{orig_col}_sum",
+                    "AVG": f"{orig_col}_avg", "MEAN": f"{orig_col}_avg",
+                    "COUNT": f"{orig_col}_count",
+                    "DISTINCT": f"{orig_col}_distinct_count",
+                    "MIN": f"{orig_col}_min",
+                    "MAX": f"{orig_col}_max"
+                }
+                if func_upper in expected_names:
+                    expected_name = expected_names[func_upper]
+                    if col == orig_col:
+                        col = expected_name
+                        break
+                    elif col == expected_name:
+                        break
+
+        order_sql = f' ORDER BY "{col}" {dirc}'
+
+    limit_sql = ""
+    if offset:
+        limit_sql += f" OFFSET {int(offset)}"
+    if limit:
+        limit_sql = f" LIMIT {int(limit)}" + limit_sql
+
+    sql = f"SELECT {cols} FROM {table}{where_sql}{group_sql}{having_sql}{order_sql}{limit_sql}"
+
+    try:
+        with _get_db_connection() as conn:
+            result = conn.execute(sql, params).fetchall()
+            # Get column names
+            column_names = [desc[0] for desc in conn.execute(sql, params).description]
+            # Convert to list of dicts
+            return [dict(zip(column_names, row)) for row in result]
+    except Exception as e:
+        logger.error(f"DuckDB pushdown error: {e}")
+        logger.error(f"SQL: {sql}")
+        logger.error(f"Params: {params}")
+        raise
+
+
+def _duckdb_yoy(
+    file_meta: Dict[str, Any],
+    key_col: str,
+    value_col: str,
+    base_year: int,
+    compare_year: int,
+    extra_where: Dict[str, Any],
+    top_n: int,
+    direction: str,
+) -> Optional[List[Dict[str, Any]]]:
+    """
+    Optimized year-over-year calculation using DuckDB.
+    Returns list of row dicts with YoY changes.
+    """
+    if file_meta.get("engine") != "duckdb":
+        return None
+
+    uri = file_meta.get("path")
+    if not uri or not uri.startswith("duckdb://"):
+        return None
+
+    db_path, _, table = uri[len("duckdb://"):].partition("#")
+    if not table:
+        return None
+
+    # Security: Validate table name
+    valid_table, table_error = _validate_column_name_enhanced(table)
+    if not valid_table:
+        raise ValueError(f"Invalid table name: {table_error}")
+
+    # Security: Validate column names
+    for col in [key_col, value_col]:
+        valid, error = _validate_column_name_enhanced(col)
+        if not valid:
+            raise ValueError(f"Invalid column name in yoy: {error}")
+
+    # Build WHERE with enforced years
+    where = dict(extra_where or {})
+    where["year"] = {"in": [base_year, compare_year]}
+    where_sql, params = _build_where_sql(where)
+
+    sql = f"""
+        WITH t AS (
+            SELECT {key_col} AS k, CAST(year AS INT) AS y, SUM({value_col}) AS v
+            FROM {table}
+            {where_sql}
+            GROUP BY {key_col}, y
+        )
+        SELECT a.k AS key,
+               a.v AS base,
+               b.v AS compare,
+               (a.v - b.v) AS delta,
+               CASE WHEN a.v <> 0 THEN (a.v - b.v) / a.v * 100.0 ELSE NULL END AS pct
+        FROM t a
+        JOIN t b ON a.k = b.k AND a.y = ? AND b.y = ?
+        ORDER BY delta {'DESC' if direction == 'drop' else 'ASC'}
+        LIMIT {int(top_n)}
+    """
+
+    try:
+        with _get_db_connection() as conn:
+            result = conn.execute(sql, params + [base_year, compare_year]).fetchall()
+            column_names = ['key', 'base', 'compare', 'delta', 'pct']
+            return [dict(zip(column_names, row)) for row in result]
+    except Exception as e:
+        logger.error(f"DuckDB YoY error: {e}")
+        raise
+
+
+# Note: Computed columns are complex and require pandas
+# They may not be needed for the MCP stdio server initially
+# Keeping stub for future implementation
+def _validate_computed_expression(expression: str, available_columns: List[str]) -> Tuple[bool, Optional[str]]:
+    """
+    Validate computed column expression for security.
+    Placeholder for future implementation.
+    """
+    import ast
+
+    # Length limit to prevent abuse
+    if len(expression) > 500:
+        return False, "Expression too long (max 500 characters)"
+
+    # Forbidden patterns (case-insensitive)
+    forbidden = ['import', 'exec', 'eval', '__', 'compile', 'globals', 'locals', 'open', 'file']
+    expr_lower = expression.lower()
+    for pattern in forbidden:
+        if pattern in expr_lower:
+            return False, f"Forbidden pattern '{pattern}' in expression"
+
+    return True, None
+
+
+# ---------------------------------------------------------------------
+# Phase 5: Suggestions & Intelligence (from mcp_server.py)
+# ---------------------------------------------------------------------
+
+def _get_distinct_values(file_meta: Dict[str, Any], column: str, limit: int = 100) -> List[str]:
+    """
+    Get distinct values for a column from a table.
+    Returns list of distinct values (sorted, limited).
+    """
+    if not file_meta:
+        return []
+
+    # Validate column name (enhanced validation)
+    valid, error = _validate_column_name_enhanced(column)
+    if not valid:
+        return []
+
+    try:
+        if file_meta.get("engine") == "duckdb":
+            uri = file_meta.get("path")
+            db_path, _, table = uri[len("duckdb://"):].partition("#")
+            if not table:
+                return []
+
+            # Validate table name
+            valid_table, _ = _validate_column_name_enhanced(table)
+            if not valid_table:
+                return []
+
+            # Security: validate column again for SQL
+            sql = f'SELECT DISTINCT "{column}" FROM {table} WHERE "{column}" IS NOT NULL ORDER BY "{column}" LIMIT {limit}'
+            with _get_db_connection() as conn:
+                result = conn.execute(sql).fetchall()
+                if result:
+                    values = [str(row[0]) for row in result]
+                    return sorted(values)[:limit]
+    except Exception as e:
+        logger.warning(f"Error getting distinct values for {column}: {e}")
+        return []
+
+    return []
+
+
+def _fuzzy_match(query: str, options: List[str], limit: int = 5) -> List[str]:
+    """
+    Find similar strings using simple string matching.
+    Returns list of matching options sorted by similarity.
+    """
+    if not query or not options:
+        return []
+
+    query_lower = query.lower().strip()
+    if not query_lower:
+        return options[:limit]
+
+    # Simple scoring: exact match > starts with > contains
+    scores = []
+    for opt in options:
+        opt_lower = opt.lower()
+        if opt_lower == query_lower:
+            scores.append((0, opt))  # Exact match - highest priority
+        elif opt_lower.startswith(query_lower):
+            scores.append((1, opt))  # Starts with - high priority
+        elif query_lower in opt_lower:
+            scores.append((2, opt))  # Contains - medium priority
+        elif query_lower[:3] in opt_lower or opt_lower[:3] in query_lower:
+            scores.append((3, opt))  # Partial match - low priority
+
+    # Sort by score, then alphabetically
+    scores.sort(key=lambda x: (x[0], x[1].lower()))
+    return [opt for _, opt in scores[:limit]]
+
+
+def _get_suggestions_for_column(file_meta: Dict[str, Any], column: str,
+                                query: Optional[str] = None, limit: int = 10) -> Dict[str, Any]:
+    """
+    Get suggestions for a column, optionally filtered by query string.
+    Returns dict with suggestions and metadata.
+    """
+    if not file_meta:
+        return {"suggestions": [], "column": column, "total_available": 0}
+
+    # Get all distinct values
+    all_values = _get_distinct_values(file_meta, column, limit=500)  # Get more for filtering
+    total_available = len(all_values)
+
+    if not all_values:
+        return {"suggestions": [], "column": column, "total_available": 0}
+
+    # If query provided, do fuzzy matching
+    if query:
+        suggestions = _fuzzy_match(query, all_values, limit=limit)
+    else:
+        # No query - return first N values
+        suggestions = all_values[:limit]
+
+    return {
+        "suggestions": suggestions,
+        "column": column,
+        "total_available": total_available,
+        "showing": len(suggestions)
+    }
+
+
+def _get_cities_data_coverage() -> Dict[str, Any]:
+    """Get cities dataset coverage information"""
+    return {
+        "available_countries": [
+            "Azerbaijan", "India", "Kazakhstan", "Madagascar",
+            "People's Republic of China", "Samoa", "Somalia", "South Africa",
+            "France", "Germany", "United States of America", "United Kingdom",
+            "Italy", "Spain", "Japan", "Brazil", "Canada"
+        ],
+        "total_countries": 17,
+        "total_cities": 116,
+        "coverage_period": "2000-2023",
+        "status": "comprehensive",
+        "major_cities_included": [
+            "Paris", "London", "New York", "Tokyo", "Berlin", "Rome", "Madrid",
+            "São Paulo", "Toronto", "Mumbai", "Beijing"
+        ]
+    }
+
+
+def _get_cities_suggestions(country_name: str) -> Dict[str, Any]:
+    """Get smart suggestions for unavailable cities data"""
+    available_countries = [
+        "Azerbaijan", "India", "Kazakhstan", "Madagascar",
+        "People's Republic of China", "Samoa", "Somalia", "South Africa",
+        "France", "Germany", "United States of America", "United Kingdom",
+        "Italy", "Spain", "Japan", "Brazil", "Canada"
+    ]
+
+    return {
+        "message": f"City data is not available for {country_name}",
+        "available_alternatives": [
+            "Which Indian city has the highest emissions?",
+            "Which Chinese city has the highest emissions?",
+            f"What are {country_name}'s total transport emissions by year?"
+        ],
+        "available_countries": available_countries,
+        "suggestions": [
+            f"Try asking about one of these countries: {', '.join(available_countries[:3])}",
+            "Ask about country-level emissions instead of city-level",
+            "Check if the country is available in the country dataset"
+        ]
+    }
+
+
+@lru_cache(maxsize=1)
+def _coverage_index() -> Dict[str, List[str]]:
+    """Build coverage index for all datasets (cached)"""
+    idx = {"city": set(), "admin1": set(), "country": set()}
+
+    for file_meta in MANIFEST.get("files", []):
+        try:
+            if file_meta.get("engine") == "duckdb":
+                uri = file_meta.get("path")
+                db_path, _, table = uri[len("duckdb://"):].partition("#")
+                if not table:
+                    continue
+
+                with _get_db_connection() as conn:
+                    # Check which columns exist
+                    table_info_sql = f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table}'"
+                    columns_result = conn.execute(table_info_sql).fetchall()
+                    cols = {row[0] for row in columns_result}
+
+                    if "city_name" in cols:
+                        result = conn.execute(f'SELECT DISTINCT city_name FROM {table} WHERE city_name IS NOT NULL').fetchall()
+                        idx["city"].update(str(row[0]) for row in result)
+                    if "admin1_name" in cols:
+                        result = conn.execute(f'SELECT DISTINCT admin1_name FROM {table} WHERE admin1_name IS NOT NULL').fetchall()
+                        idx["admin1"].update(str(row[0]) for row in result)
+                    if "country_name" in cols:
+                        result = conn.execute(f'SELECT DISTINCT country_name FROM {table} WHERE country_name IS NOT NULL').fetchall()
+                        idx["country"].update(str(row[0]) for row in result)
+        except Exception as e:
+            logger.warning(f"Error building coverage index for {file_meta.get('file_id', 'unknown')}: {e}")
+            continue
+
+    return {k: sorted(v) for k, v in idx.items()}
+
+
+def _top_matches(name: str, pool: List[str], k: int = 5) -> List[str]:
+    """Find top matching strings from a pool"""
+    nm = (name or "").lower()
+    scored = []
+    for p in pool:
+        pl = p.lower()
+        score = 0 if pl == nm else (1 if nm in pl else 2)
+        scored.append((p, score, len(p)))
+    scored.sort(key=lambda x: (x[1], x[2]))
+    return [p for p, _, _ in scored[:k]]
+
+
+# ---------------------------------------------------------------------
+# Phase 2 & 4: Remaining Validation and Data Handling
+# ---------------------------------------------------------------------
+
+def _get_file_meta(file_id: str) -> Optional[Dict[str, Any]]:
+    """Get file metadata from manifest"""
+    return next((f for f in MANIFEST.get("files", []) if f.get("file_id") == file_id), None)
+
+
+def _validate_query_intent(
+    file_id: str,
+    where: Dict[str, Any],
+    select: List[str],
+    file_meta: Optional[Dict[str, Any]] = None,
+    assist: bool = True
+) -> Tuple[bool, Optional[str], Optional[Dict[str, Any]], Optional[List[str]]]:
+    """
+    Validate query and detect potential issues before execution.
+    Returns: (is_valid, warning_message, suggestions_dict, suggestions_list)
+    """
+    warnings = []
+    suggestions_dict: Dict[str, Any] = {}
+    suggestions_list: List[str] = []
+
+    if not file_meta:
+        return False, "File metadata not found", None, ["Check available datasets"]
+
+    # Check temporal coverage
+    if "year" in where:
+        year_val = where["year"]
+        if isinstance(year_val, int):
+            temporal = file_meta.get("temporal_coverage", "")
+            coverage = _parse_temporal_coverage(temporal)
+            if coverage:
+                start, end = coverage
+                if year_val < start or year_val > end:
+                    warnings.append(f"Year {year_val} outside dataset coverage ({start}-{end})")
+                    # Suggest nearest available year
+                    nearest = max(start, min(end, year_val))
+                    suggestions_dict["nearest_year"] = nearest
+                    suggestions_list.append(f"Try year {nearest} (dataset covers {start}-{end})")
+
+    # Check spatial coverage for city queries
+    if "city" in file_id and "country_name" in where:
+        country = where.get("country_name")
+        if isinstance(country, str):
+            coverage_info = _get_cities_data_coverage()
+            available = coverage_info.get("available_countries", [])
+            if country not in available:
+                warnings.append(f"City data not available for '{country}'")
+                suggestions_dict.update(_get_cities_suggestions(country))
+                suggestions_list.extend([
+                    f"City data available for: {', '.join(available[:5])}",
+                    "Try querying at country or admin1 level instead"
+                ])
+
+    # Check for ambiguous filters
+    if not where and assist:
+        warnings.append("No filters specified - returning sample data")
+        suggestions_list.append("Add filters like 'year' or 'country_name' to narrow results")
+
+    # Check if select columns exist in manifest
+    if file_meta.get("columns") and select:
+        manifest_cols = {col.get("name") for col in file_meta.get("columns", []) if isinstance(col, dict)}
+        missing_cols = [c for c in select if c not in manifest_cols]
+        if missing_cols:
+            warnings.append(f"Some requested columns may not exist: {missing_cols}")
+            suggestions_list.append(f"Available columns: {', '.join(sorted(manifest_cols)[:10])}...")
+
+    warning_msg = "; ".join(warnings) if warnings else None
+    return True, warning_msg, suggestions_dict if suggestions_dict else None, suggestions_list if suggestions_list else None
+
+
+def _detect_query_patterns(
+    where: Dict[str, Any],
+    group_by: List[str],
+    order_by: Optional[str],
+    limit: Optional[int]
+) -> Dict[str, Any]:
+    """Detect query patterns to provide better suggestions."""
+    patterns = {
+        "is_top_n": False,
+        "is_comparison": False,
+        "is_trend": False,
+        "has_temporal_filter": "year" in where or "month" in where,
+        "has_spatial_filter": any(k in where for k in ["country_name", "admin1_name", "city_name"]),
+        "needs_aggregation": bool(group_by),
+    }
+
+    # Detect top N pattern
+    if order_by and "DESC" in order_by.upper():
+        if limit and limit <= 20:
+            patterns["is_top_n"] = True
+
+    # Detect comparison pattern
+    if "year" in where and isinstance(where["year"], dict) and "in" in where["year"]:
+        if len(where["year"]["in"]) == 2:
+            patterns["is_comparison"] = True
+
+    # Detect trend pattern
+    if "year" in where or (group_by and "year" in group_by):
+        patterns["is_trend"] = True
+
+    return patterns
+
 
 class DuckDBConnectionPool:
     """
@@ -225,19 +1176,12 @@ def _get_db_connection():
 # ========================================
 
 def _validate_file_id(file_id: str) -> tuple[bool, Optional[str]]:
-    """Validate file_id format"""
-    if not file_id or len(file_id) > 200:
-        return False, "file_id must be 1-200 characters"
-    if "/" in file_id or ".." in file_id:
-        return False, "file_id cannot contain '/' or '..'"
-    return True, None
+    """Validate file_id format - calls enhanced version"""
+    return _validate_file_id_enhanced(file_id)
 
 def _find_file_meta(file_id: str):
-    """Find file metadata in manifest"""
-    for f in MANIFEST.get("files", []):
-        if f.get("file_id") == file_id:
-            return f
-    return None
+    """Find file metadata in manifest - calls _get_file_meta"""
+    return _get_file_meta(file_id)
 
 def _get_table_name(file_meta: dict) -> Optional[str]:
     """Extract table name from file metadata"""
@@ -247,7 +1191,10 @@ def _get_table_name(file_meta: dict) -> Optional[str]:
     return None
 
 def _build_where_sql(where: dict[str, Any]) -> tuple[str, list]:
-    """Build WHERE clause SQL with parameters"""
+    """
+    Build WHERE clause SQL with parameterized queries (enhanced version).
+    Supports: equality, in, between, comparisons, contains/ILIKE
+    """
     if not where:
         return "", []
 
@@ -256,28 +1203,43 @@ def _build_where_sql(where: dict[str, Any]) -> tuple[str, list]:
 
     for key, value in where.items():
         if isinstance(value, list):
+            # List values are treated as IN operator
             placeholders = ",".join(["?"] * len(value))
             conditions.append(f"{key} IN ({placeholders})")
             params.extend(value)
         elif isinstance(value, dict):
-            # Support operators like {"$gt": 1000}
-            for op, val in value.items():
-                if op == "$gt":
-                    conditions.append(f"{key} > ?")
-                    params.append(val)
-                elif op == "$lt":
-                    conditions.append(f"{key} < ?")
-                    params.append(val)
-                elif op == "$gte":
-                    conditions.append(f"{key} >= ?")
-                    params.append(val)
-                elif op == "$lte":
-                    conditions.append(f"{key} <= ?")
-                    params.append(val)
-                elif op == "$ne":
-                    conditions.append(f"{key} != ?")
-                    params.append(val)
+            # Support various operators
+            if "in" in value and isinstance(value["in"], list):
+                placeholders = ",".join(["?"] * len(value["in"]))
+                conditions.append(f"{key} IN ({placeholders})")
+                params.extend(value["in"])
+            elif "between" in value and isinstance(value["between"], (list, tuple)) and len(value["between"]) == 2:
+                conditions.append(f"{key} BETWEEN ? AND ?")
+                params.extend(list(value["between"]))
+            elif "gte" in value:
+                conditions.append(f"{key} >= ?")
+                params.append(value["gte"])
+            elif "lte" in value:
+                conditions.append(f"{key} <= ?")
+                params.append(value["lte"])
+            elif "gt" in value or "$gt" in value:
+                val = value.get("gt", value.get("$gt"))
+                conditions.append(f"{key} > ?")
+                params.append(val)
+            elif "lt" in value or "$lt" in value:
+                val = value.get("lt", value.get("$lt"))
+                conditions.append(f"{key} < ?")
+                params.append(val)
+            elif "ne" in value or "$ne" in value:
+                val = value.get("ne", value.get("$ne"))
+                conditions.append(f"{key} != ?")
+                params.append(val)
+            elif "contains" in value:
+                # Case-insensitive substring search
+                conditions.append(f"CAST({key} AS VARCHAR) ILIKE ?")
+                params.append(f"%{value['contains']}%")
         else:
+            # Simple equality
             conditions.append(f"{key} = ?")
             params.append(value)
 
@@ -286,11 +1248,13 @@ def _build_where_sql(where: dict[str, Any]) -> tuple[str, list]:
 
 def _validate_column_name(column: str, file_meta: dict) -> tuple[bool, Optional[str]]:
     """Validate column name exists in dataset schema (prevents SQL injection)"""
-    if not column:
-        return False, "column name required"
+    # First, do security validation
+    valid, error = _validate_column_name_enhanced(column)
+    if not valid:
+        return False, error
 
+    # Then check against schema
     valid_columns = [col["name"] for col in file_meta.get("columns", [])]
-
     if column not in valid_columns:
         return False, f"Invalid column '{column}'. Valid columns: {', '.join(valid_columns[:10])}"
 
@@ -449,6 +1413,78 @@ async def handle_list_tools() -> list[Tool]:
                     }
                 },
                 "required": ["file_id", "entity_column", "entity_value"]
+            }
+        ),
+        Tool(
+            name="get_data_coverage",
+            description="Get comprehensive data coverage information for all datasets including available countries, cities, and admin regions",
+            inputSchema={
+                "type": "object",
+                "properties": {},
+                "required": []
+            }
+        ),
+        Tool(
+            name="get_column_suggestions",
+            description="Get smart suggestions for column values with fuzzy matching support",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "file_id": {
+                        "type": "string",
+                        "description": "Dataset identifier"
+                    },
+                    "column": {
+                        "type": "string",
+                        "description": "Column name to get suggestions for"
+                    },
+                    "query": {
+                        "type": "string",
+                        "description": "Optional search query for fuzzy matching"
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Maximum suggestions to return (default: 10)",
+                        "default": 10
+                    }
+                },
+                "required": ["file_id", "column"]
+            }
+        ),
+        Tool(
+            name="validate_query",
+            description="Validate a query before execution and get helpful suggestions for improvements",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "file_id": {
+                        "type": "string",
+                        "description": "Dataset identifier"
+                    },
+                    "select": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Columns to select"
+                    },
+                    "where": {
+                        "type": "object",
+                        "description": "Filter conditions"
+                    },
+                    "group_by": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Columns to group by"
+                    },
+                    "order_by": {
+                        "type": "string",
+                        "description": "Column to sort by"
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Row limit"
+                    }
+                },
+                "required": ["file_id"]
             }
         )
     ]
@@ -1139,6 +2175,168 @@ Use the analyze_monthly_trends tool with file_id='{sector}-country-month' for de
                 )
             )
         ]
+
+    elif name == "get_data_coverage":
+        try:
+            # Build comprehensive coverage index
+            coverage_idx = _coverage_index()
+            cities_coverage = _get_cities_data_coverage()
+
+            result = {
+                "coverage_by_type": {
+                    "countries": {
+                        "count": len(coverage_idx.get("country", [])),
+                        "sample": coverage_idx.get("country", [])[:10]
+                    },
+                    "admin1_regions": {
+                        "count": len(coverage_idx.get("admin1", [])),
+                        "sample": coverage_idx.get("admin1", [])[:10]
+                    },
+                    "cities": {
+                        "count": len(coverage_idx.get("city", [])),
+                        "sample": coverage_idx.get("city", [])[:10]
+                    }
+                },
+                "city_data_coverage": cities_coverage,
+                "datasets": len(MANIFEST.get("files", [])),
+                "status": "comprehensive"
+            }
+
+            return [TextContent(
+                type="text",
+                text=json.dumps(result, indent=2)
+            )]
+        except Exception as e:
+            logger.error(f"Error getting data coverage: {e}")
+            return [TextContent(
+                type="text",
+                text=json.dumps(_error_response(
+                    "coverage_error",
+                    f"Failed to retrieve data coverage: {str(e)}"
+                ))
+            )]
+
+    elif name == "get_column_suggestions":
+        file_id = arguments.get("file_id")
+        column = arguments.get("column")
+        query = arguments.get("query")
+        limit = arguments.get("limit", 10)
+
+        if not file_id or not column:
+            return [TextContent(
+                type="text",
+                text=json.dumps(_error_response(
+                    "missing_parameters",
+                    "file_id and column are required"
+                ))
+            )]
+
+        # Validate file_id
+        valid, error = _validate_file_id(file_id)
+        if not valid:
+            return [TextContent(
+                type="text",
+                text=json.dumps(_error_response("invalid_file_id", error))
+            )]
+
+        file_meta = _find_file_meta(file_id)
+        if not file_meta:
+            return [TextContent(
+                type="text",
+                text=json.dumps(_error_response(
+                    "file_not_found",
+                    f"Dataset '{file_id}' not found"
+                ))
+            )]
+
+        try:
+            suggestions = _get_suggestions_for_column(file_meta, column, query, limit)
+            return [TextContent(
+                type="text",
+                text=json.dumps(suggestions, indent=2)
+            )]
+        except Exception as e:
+            logger.error(f"Error getting column suggestions: {e}")
+            return [TextContent(
+                type="text",
+                text=json.dumps(_error_response(
+                    "suggestions_error",
+                    f"Failed to get suggestions: {str(e)}"
+                ))
+            )]
+
+    elif name == "validate_query":
+        file_id = arguments.get("file_id")
+        select = arguments.get("select", [])
+        where = arguments.get("where", {})
+        group_by = arguments.get("group_by", [])
+        order_by = arguments.get("order_by")
+        limit = arguments.get("limit", 20)
+
+        if not file_id:
+            return [TextContent(
+                type="text",
+                text=json.dumps(_error_response("missing_file_id", "file_id is required"))
+            )]
+
+        # Validate file_id
+        valid, error = _validate_file_id(file_id)
+        if not valid:
+            return [TextContent(
+                type="text",
+                text=json.dumps(_error_response("invalid_file_id", error))
+            )]
+
+        file_meta = _find_file_meta(file_id)
+        if not file_meta:
+            return [TextContent(
+                type="text",
+                text=json.dumps(_error_response("file_not_found", f"Dataset '{file_id}' not found"))
+            )]
+
+        validation_result = {
+            "valid": True,
+            "warnings": [],
+            "suggestions": [],
+            "query_patterns": {}
+        }
+
+        try:
+            # Validate query complexity
+            valid, complexity_error, limits = _validate_query_complexity(select, where, group_by, order_by)
+            if not valid:
+                validation_result["valid"] = False
+                validation_result["warnings"].append(complexity_error)
+                validation_result["limits"] = limits
+
+            # Validate query intent
+            intent_valid, intent_warning, suggestions_dict, suggestions_list = _validate_query_intent(
+                file_id, where, select, file_meta
+            )
+            if intent_warning:
+                validation_result["warnings"].append(intent_warning)
+            if suggestions_list:
+                validation_result["suggestions"].extend(suggestions_list)
+            if suggestions_dict:
+                validation_result["intent_suggestions"] = suggestions_dict
+
+            # Detect query patterns
+            patterns = _detect_query_patterns(where, group_by, order_by, limit)
+            validation_result["query_patterns"] = patterns
+
+            return [TextContent(
+                type="text",
+                text=json.dumps(validation_result, indent=2)
+            )]
+        except Exception as e:
+            logger.error(f"Error validating query: {e}")
+            return [TextContent(
+                type="text",
+                text=json.dumps(_error_response(
+                    "validation_error",
+                    f"Query validation failed: {str(e)}"
+                ))
+            )]
 
     return []
 
