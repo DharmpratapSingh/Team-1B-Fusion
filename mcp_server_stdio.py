@@ -1414,6 +1414,78 @@ async def handle_list_tools() -> list[Tool]:
                 },
                 "required": ["file_id", "entity_column", "entity_value"]
             }
+        ),
+        Tool(
+            name="get_data_coverage",
+            description="Get comprehensive data coverage information for all datasets including available countries, cities, and admin regions",
+            inputSchema={
+                "type": "object",
+                "properties": {},
+                "required": []
+            }
+        ),
+        Tool(
+            name="get_column_suggestions",
+            description="Get smart suggestions for column values with fuzzy matching support",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "file_id": {
+                        "type": "string",
+                        "description": "Dataset identifier"
+                    },
+                    "column": {
+                        "type": "string",
+                        "description": "Column name to get suggestions for"
+                    },
+                    "query": {
+                        "type": "string",
+                        "description": "Optional search query for fuzzy matching"
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Maximum suggestions to return (default: 10)",
+                        "default": 10
+                    }
+                },
+                "required": ["file_id", "column"]
+            }
+        ),
+        Tool(
+            name="validate_query",
+            description="Validate a query before execution and get helpful suggestions for improvements",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "file_id": {
+                        "type": "string",
+                        "description": "Dataset identifier"
+                    },
+                    "select": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Columns to select"
+                    },
+                    "where": {
+                        "type": "object",
+                        "description": "Filter conditions"
+                    },
+                    "group_by": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Columns to group by"
+                    },
+                    "order_by": {
+                        "type": "string",
+                        "description": "Column to sort by"
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Row limit"
+                    }
+                },
+                "required": ["file_id"]
+            }
         )
     ]
 
@@ -2103,6 +2175,168 @@ Use the analyze_monthly_trends tool with file_id='{sector}-country-month' for de
                 )
             )
         ]
+
+    elif name == "get_data_coverage":
+        try:
+            # Build comprehensive coverage index
+            coverage_idx = _coverage_index()
+            cities_coverage = _get_cities_data_coverage()
+
+            result = {
+                "coverage_by_type": {
+                    "countries": {
+                        "count": len(coverage_idx.get("country", [])),
+                        "sample": coverage_idx.get("country", [])[:10]
+                    },
+                    "admin1_regions": {
+                        "count": len(coverage_idx.get("admin1", [])),
+                        "sample": coverage_idx.get("admin1", [])[:10]
+                    },
+                    "cities": {
+                        "count": len(coverage_idx.get("city", [])),
+                        "sample": coverage_idx.get("city", [])[:10]
+                    }
+                },
+                "city_data_coverage": cities_coverage,
+                "datasets": len(MANIFEST.get("files", [])),
+                "status": "comprehensive"
+            }
+
+            return [TextContent(
+                type="text",
+                text=json.dumps(result, indent=2)
+            )]
+        except Exception as e:
+            logger.error(f"Error getting data coverage: {e}")
+            return [TextContent(
+                type="text",
+                text=json.dumps(_error_response(
+                    "coverage_error",
+                    f"Failed to retrieve data coverage: {str(e)}"
+                ))
+            )]
+
+    elif name == "get_column_suggestions":
+        file_id = arguments.get("file_id")
+        column = arguments.get("column")
+        query = arguments.get("query")
+        limit = arguments.get("limit", 10)
+
+        if not file_id or not column:
+            return [TextContent(
+                type="text",
+                text=json.dumps(_error_response(
+                    "missing_parameters",
+                    "file_id and column are required"
+                ))
+            )]
+
+        # Validate file_id
+        valid, error = _validate_file_id(file_id)
+        if not valid:
+            return [TextContent(
+                type="text",
+                text=json.dumps(_error_response("invalid_file_id", error))
+            )]
+
+        file_meta = _find_file_meta(file_id)
+        if not file_meta:
+            return [TextContent(
+                type="text",
+                text=json.dumps(_error_response(
+                    "file_not_found",
+                    f"Dataset '{file_id}' not found"
+                ))
+            )]
+
+        try:
+            suggestions = _get_suggestions_for_column(file_meta, column, query, limit)
+            return [TextContent(
+                type="text",
+                text=json.dumps(suggestions, indent=2)
+            )]
+        except Exception as e:
+            logger.error(f"Error getting column suggestions: {e}")
+            return [TextContent(
+                type="text",
+                text=json.dumps(_error_response(
+                    "suggestions_error",
+                    f"Failed to get suggestions: {str(e)}"
+                ))
+            )]
+
+    elif name == "validate_query":
+        file_id = arguments.get("file_id")
+        select = arguments.get("select", [])
+        where = arguments.get("where", {})
+        group_by = arguments.get("group_by", [])
+        order_by = arguments.get("order_by")
+        limit = arguments.get("limit", 20)
+
+        if not file_id:
+            return [TextContent(
+                type="text",
+                text=json.dumps(_error_response("missing_file_id", "file_id is required"))
+            )]
+
+        # Validate file_id
+        valid, error = _validate_file_id(file_id)
+        if not valid:
+            return [TextContent(
+                type="text",
+                text=json.dumps(_error_response("invalid_file_id", error))
+            )]
+
+        file_meta = _find_file_meta(file_id)
+        if not file_meta:
+            return [TextContent(
+                type="text",
+                text=json.dumps(_error_response("file_not_found", f"Dataset '{file_id}' not found"))
+            )]
+
+        validation_result = {
+            "valid": True,
+            "warnings": [],
+            "suggestions": [],
+            "query_patterns": {}
+        }
+
+        try:
+            # Validate query complexity
+            valid, complexity_error, limits = _validate_query_complexity(select, where, group_by, order_by)
+            if not valid:
+                validation_result["valid"] = False
+                validation_result["warnings"].append(complexity_error)
+                validation_result["limits"] = limits
+
+            # Validate query intent
+            intent_valid, intent_warning, suggestions_dict, suggestions_list = _validate_query_intent(
+                file_id, where, select, file_meta
+            )
+            if intent_warning:
+                validation_result["warnings"].append(intent_warning)
+            if suggestions_list:
+                validation_result["suggestions"].extend(suggestions_list)
+            if suggestions_dict:
+                validation_result["intent_suggestions"] = suggestions_dict
+
+            # Detect query patterns
+            patterns = _detect_query_patterns(where, group_by, order_by, limit)
+            validation_result["query_patterns"] = patterns
+
+            return [TextContent(
+                type="text",
+                text=json.dumps(validation_result, indent=2)
+            )]
+        except Exception as e:
+            logger.error(f"Error validating query: {e}")
+            return [TextContent(
+                type="text",
+                text=json.dumps(_error_response(
+                    "validation_error",
+                    f"Query validation failed: {str(e)}"
+                ))
+            )]
 
     return []
 
