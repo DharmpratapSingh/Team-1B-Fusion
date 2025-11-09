@@ -5,19 +5,19 @@ echo "🚀 Starting ClimateGPT Application..."
 # Clear cache
 find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
 
-# Start MCP Server
-echo "📡 Starting MCP Server..."
-python mcp_server.py &
+# Start MCP HTTP Bridge (wraps mcp_server_stdio.py)
+echo "📡 Starting MCP Bridge Server..."
+python mcp_http_bridge.py &
 MCP_PID=$!
 
 # Wait for MCP Server to start
 sleep 3
 
-# Check if MCP Server is running
+# Check if MCP Bridge is running
 if curl -s http://localhost:8010/health > /dev/null; then
-    echo "✅ MCP Server started successfully"
+    echo "✅ MCP Bridge started successfully (using TRUE MCP protocol)"
 else
-    echo "❌ MCP Server failed to start"
+    echo "❌ MCP Bridge failed to start"
     exit 1
 fi
 
