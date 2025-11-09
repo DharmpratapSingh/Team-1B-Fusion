@@ -1,0 +1,130 @@
+{
+  "metadata": {
+    "test_date": "2025-11-02T15:15:59.790598",
+    "test_type": "automated_llm_comparison_same_backend",
+    "total_questions": 3,
+    "total_tests": 6
+  },
+  "summary_stats": {
+    "total_questions": 3,
+    "llm_stats": {
+      "llama_q5km": {
+        "total_tests": 3,
+        "successes": 3,
+        "success_rate": 100.0,
+        "avg_response_time_ms": 9012.4,
+        "tool_call_rate": 100.0,
+        "answer_rate": 100.0
+      },
+      "default": {
+        "total_tests": 3,
+        "successes": 3,
+        "success_rate": 100.0,
+        "avg_response_time_ms": 4369.7,
+        "tool_call_rate": 100.0,
+        "answer_rate": 100.0
+      }
+    }
+  },
+  "results": [
+    {
+      "question_id": 1,
+      "question": "What were Germany's transportation sector emissions in 2023?",
+      "category": "simple",
+      "sector": "transport",
+      "level": "country",
+      "grain": "year",
+      "difficulty": "easy",
+      "llm_results": {
+        "default": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}}",
+          "tool_result_preview": "(first 10 rows) ---\n{\n  \"rows\": [\n    {\n      \"country_name\": \"Germany\",\n      \"year\": 2023,\n      \"emissions_tonnes\": 164426928.0\n    }\n  ],\n  \"row_count\": 1,\n  \"meta\": {\n    \"units\": [\n      \"tonnes CO2\"\n    ],\n    \"source\": \"EDGAR v2024\",\n    \"table_id\": \"transport-country-year\",\n    \"spatial_resolution\": null,\n    \"temporal_resolution\": null,\n    \"etag\": \"1175903b313a5895\",\n    \"query_patterns\": {\n      \"is_top_n\": false,\n      \"is_comparison\": false,\n      \"is_trend\": true,\n      \"has_tempo",
+          "answer": "Germany's transportation sector emissions in 2023 were 164.426928 MtCO\u2082. This value is derived from the data provided, which is sourced from EDGAR v2024. The data indicates that the transportation sector is a significant contributor to Germany's greenhouse gas emissions, with a total of 164.426928 million tonnes of CO\u2082 equivalent released into the atmosphere.",
+          "error": null,
+          "response_time_ms": 4337.99,
+          "timestamp": "2025-11-02T15:15:17.943129",
+          "has_tool_call": true,
+          "has_answer": true
+        },
+        "llama_q5km": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}}",
+          "tool_result_preview": "(first 10 rows) ---\n{\n  \"rows\": [\n    {\n      \"country_name\": \"Germany\",\n      \"year\": 2023,\n      \"emissions_tonnes\": 164426928.0\n    }\n  ],\n  \"row_count\": 1,\n  \"meta\": {\n    \"units\": [\n      \"tonnes CO2\"\n    ],\n    \"source\": \"EDGAR v2024\",\n    \"table_id\": \"transport-country-year\",\n    \"spatial_resolution\": null,\n    \"temporal_resolution\": null,\n    \"etag\": \"1175903b313a5895\",\n    \"query_patterns\": {\n      \"is_top_n\": false,\n      \"is_comparison\": false,\n      \"is_trend\": true,\n      \"has_tempo",
+          "answer": "Germany's transportation sector emissions in 2023 were 164,426,928 tonnes CO2. This is equivalent to 164.427 MtCO2. Source: transport-country-year, EDGAR v2024.",
+          "error": null,
+          "response_time_ms": 8131.48,
+          "timestamp": "2025-11-02T15:15:27.081067",
+          "has_tool_call": true,
+          "has_answer": true
+        }
+      }
+    },
+    {
+      "question_id": 2,
+      "question": "How much CO2 did California emit from transportation in 2022?",
+      "category": "simple",
+      "sector": "transport",
+      "level": "admin1",
+      "grain": "year",
+      "difficulty": "easy",
+      "llm_results": {
+        "default": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-admin1-year\",\"select\":[\"admin1_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"admin1_name\":\"California\",\"year\":2022}}}",
+          "tool_result_preview": "(first 10 rows) ---\n{\n  \"rows\": [\n    {\n      \"year\": 2022,\n      \"emissions_tonnes\": 3216535.0\n    },\n    {\n      \"year\": 2022,\n      \"emissions_tonnes\": 57606.078125\n    },\n    {\n      \"year\": 2022,\n      \"emissions_tonnes\": 1928454.75\n    },\n    {\n      \"year\": 2022,\n      \"emissions_tonnes\": 44616600.0\n    },\n    {\n      \"year\": 2022,\n      \"emissions_tonnes\": 1708.6353759765625\n    },\n    {\n      \"year\": 2022,\n      \"emissions_tonnes\": 111689.8671875\n    },\n    {\n      \"year\": 2022,\n      \"",
+          "answer": "According to the data provided, California emitted 3216535 tonnes of CO2 from transportation in 2022. This is equivalent to 3.216535 MtCO2. The source of this information is \"transport-country-year\" from EDGAR v2024.",
+          "error": null,
+          "response_time_ms": 3936.84,
+          "timestamp": "2025-11-02T15:15:32.024819",
+          "has_tool_call": true,
+          "has_answer": true
+        },
+        "llama_q5km": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-admin1-year\",\"select\":[\"admin1_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"admin1_name\":\"California\",\"year\":2022}}}",
+          "tool_result_preview": "(first 10 rows) ---\n{\n  \"rows\": [\n    {\n      \"year\": 2022,\n      \"emissions_tonnes\": 3216535.0\n    },\n    {\n      \"year\": 2022,\n      \"emissions_tonnes\": 57606.078125\n    },\n    {\n      \"year\": 2022,\n      \"emissions_tonnes\": 1928454.75\n    },\n    {\n      \"year\": 2022,\n      \"emissions_tonnes\": 44616600.0\n    },\n    {\n      \"year\": 2022,\n      \"emissions_tonnes\": 1708.6353759765625\n    },\n    {\n      \"year\": 2022,\n      \"emissions_tonnes\": 111689.8671875\n    },\n    {\n      \"year\": 2022,\n      \"",
+          "answer": "California's transportation emissions in 2022 were 44616600 tonnes of CO2. This is equivalent to 44.6166 MtCO2. The data source is \"Source: transport-country-year, EDGAR v2024\".",
+          "error": null,
+          "response_time_ms": 10637.05,
+          "timestamp": "2025-11-02T15:15:43.668095",
+          "has_tool_call": true,
+          "has_answer": true
+        }
+      }
+    },
+    {
+      "question_id": 3,
+      "question": "Show me transportation emissions for Tokyo in 2021.",
+      "category": "simple",
+      "sector": "transport",
+      "level": "city",
+      "grain": "year",
+      "difficulty": "easy",
+      "llm_results": {
+        "default": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-city-year\",\"select\":[\"city_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"city_name\":\"Tokyo\",\"year\":2021}}}",
+          "tool_result_preview": "(first 10 rows) ---\n{\n  \"rows\": [\n    {\n      \"city_name\": \"Tokyo\",\n      \"year\": 2021,\n      \"emissions_tonnes\": 18544189.95\n    }\n  ],\n  \"row_count\": 1,\n  \"meta\": {\n    \"units\": [\n      \"tonnes CO2\"\n    ],\n    \"source\": \"EDGAR v2024\",\n    \"table_id\": \"transport-city-year\",\n    \"spatial_resolution\": null,\n    \"temporal_resolution\": null,\n    \"etag\": \"d4cf5d5549fe552c\",\n    \"query_patterns\": {\n      \"is_top_n\": false,\n      \"is_comparison\": false,\n      \"is_trend\": true,\n      \"has_temporal_filt",
+          "answer": "The transportation sector in Tokyo emitted 18.54418995 MtCO\u2082 in 2021, according to the EDGAR v2024 dataset. This value is derived from the original emissions data of 18,544,189.95 tonnes CO2, which was converted to megatonnes by dividing by 1,000,000. The dataset provides a comprehensive overview of transportation emissions across various cities, including Tokyo, and covers a period from 2000 to 2023. The data is sourced from the EDGAR v2024 dataset, which is a widely recognized and respected source of emissions data.",
+          "error": null,
+          "response_time_ms": 4834.38,
+          "timestamp": "2025-11-02T15:15:49.509306",
+          "has_tool_call": true,
+          "has_answer": true
+        },
+        "llama_q5km": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-city-year\",\"select\":[\"city_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"city_name\":\"Tokyo\",\"year\":2021}}}",
+          "tool_result_preview": "(first 10 rows) ---\n{\n  \"rows\": [\n    {\n      \"city_name\": \"Tokyo\",\n      \"year\": 2021,\n      \"emissions_tonnes\": 18544189.95\n    }\n  ],\n  \"row_count\": 1,\n  \"meta\": {\n    \"units\": [\n      \"tonnes CO2\"\n    ],\n    \"source\": \"EDGAR v2024\",\n    \"table_id\": \"transport-city-year\",\n    \"spatial_resolution\": null,\n    \"temporal_resolution\": null,\n    \"etag\": \"d4cf5d5549fe552c\",\n    \"query_patterns\": {\n      \"is_top_n\": false,\n      \"is_comparison\": false,\n      \"is_trend\": true,\n      \"has_temporal_filt",
+          "answer": "Emissions for Tokyo in 2021 are 18.544 MtCO\u2082 from the transportation sector. \nSource: transport-city-year, EDGAR v2024.",
+          "error": null,
+          "response_time_ms": 8268.53,
+          "timestamp": "2025-11-02T15:15:58.783682",
+          "has_tool_call": true,
+          "has_answer": true
+        }
+      }
+    }
+  ]
+}

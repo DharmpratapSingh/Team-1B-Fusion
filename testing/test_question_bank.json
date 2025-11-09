@@ -1,0 +1,816 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created": "2025-11-02",
+    "total_questions": 50,
+    "purpose": "Comparative LLM testing for ClimateGPT vs Meta Llama",
+    "coverage": {
+      "sectors": 8,
+      "geographic_levels": 3,
+      "temporal_grains": 2,
+      "question_types": 4
+    }
+  },
+  "questions": [
+    {
+      "id": 1,
+      "category": "simple",
+      "sector": "transport",
+      "level": "country",
+      "grain": "year",
+      "question": "What were Germany's transportation sector emissions in 2023?",
+      "expected_structure": {
+        "location": "Germany",
+        "sector": "transport",
+        "year": 2023,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 2,
+      "category": "simple",
+      "sector": "transport",
+      "level": "admin1",
+      "grain": "year",
+      "question": "How much CO2 did California emit from transportation in 2022?",
+      "expected_structure": {
+        "location": "California",
+        "sector": "transport",
+        "year": 2022,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 3,
+      "category": "simple",
+      "sector": "transport",
+      "level": "city",
+      "grain": "year",
+      "question": "Show me transportation emissions for Tokyo in 2021.",
+      "expected_structure": {
+        "location": "Tokyo",
+        "sector": "transport",
+        "year": 2021,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 4,
+      "category": "temporal",
+      "sector": "transport",
+      "level": "country",
+      "grain": "month",
+      "question": "What were USA's monthly transportation emissions for each month in 2023?",
+      "expected_structure": {
+        "location": "United States of America",
+        "sector": "transport",
+        "year": 2023,
+        "grain": "month",
+        "unit": "MtCO2"
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 5,
+      "category": "comparative",
+      "sector": "transport",
+      "level": "country",
+      "grain": "year",
+      "question": "Compare transportation emissions between USA and China in 2022.",
+      "expected_structure": {
+        "locations": ["United States of America", "China"],
+        "sector": "transport",
+        "year": 2022,
+        "comparison": true
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 6,
+      "category": "temporal",
+      "sector": "transport",
+      "level": "country",
+      "grain": "year",
+      "question": "Calculate the year-over-year change in transportation emissions for India from 2021 to 2022.",
+      "expected_structure": {
+        "location": "India",
+        "sector": "transport",
+        "years": [2021, 2022],
+        "metric": "yoy_change"
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 7,
+      "category": "simple",
+      "sector": "power",
+      "level": "country",
+      "grain": "year",
+      "question": "What were the power sector emissions for France in 2023?",
+      "expected_structure": {
+        "location": "France",
+        "sector": "power",
+        "year": 2023,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 8,
+      "category": "simple",
+      "sector": "power",
+      "level": "admin1",
+      "grain": "year",
+      "question": "How much did Texas emit from power generation in 2022?",
+      "expected_structure": {
+        "location": "Texas",
+        "sector": "power",
+        "year": 2022,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 9,
+      "category": "simple",
+      "sector": "power",
+      "level": "city",
+      "grain": "year",
+      "question": "Show me power sector emissions for London in 2021.",
+      "expected_structure": {
+        "location": "London",
+        "sector": "power",
+        "year": 2021,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 10,
+      "category": "temporal",
+      "sector": "power",
+      "level": "country",
+      "grain": "month",
+      "question": "What were China's monthly power emissions in January through June 2023?",
+      "expected_structure": {
+        "location": "China",
+        "sector": "power",
+        "year": 2023,
+        "months": [1, 2, 3, 4, 5, 6],
+        "grain": "month"
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 11,
+      "category": "comparative",
+      "sector": "power",
+      "level": "admin1",
+      "grain": "year",
+      "question": "Which US state had the highest power sector emissions in 2022?",
+      "expected_structure": {
+        "level": "admin1",
+        "country": "United States of America",
+        "sector": "power",
+        "year": 2022,
+        "ranking": true
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 12,
+      "category": "temporal",
+      "sector": "power",
+      "level": "country",
+      "grain": "year",
+      "question": "Show the trend in Germany's power sector emissions from 2020 to 2023.",
+      "expected_structure": {
+        "location": "Germany",
+        "sector": "power",
+        "years": [2020, 2021, 2022, 2023],
+        "trend": true
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 13,
+      "category": "simple",
+      "sector": "waste",
+      "level": "country",
+      "grain": "year",
+      "question": "What were Japan's waste sector emissions in 2022?",
+      "expected_structure": {
+        "location": "Japan",
+        "sector": "waste",
+        "year": 2022,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 14,
+      "category": "simple",
+      "sector": "waste",
+      "level": "admin1",
+      "grain": "year",
+      "question": "How much waste-related CO2 did Ontario emit in 2021?",
+      "expected_structure": {
+        "location": "Ontario",
+        "sector": "waste",
+        "year": 2021,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 15,
+      "category": "simple",
+      "sector": "waste",
+      "level": "city",
+      "grain": "year",
+      "question": "What are the waste emissions for Mumbai in 2023?",
+      "expected_structure": {
+        "location": "Mumbai",
+        "sector": "waste",
+        "year": 2023,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 16,
+      "category": "temporal",
+      "sector": "waste",
+      "level": "country",
+      "grain": "month",
+      "question": "Show me Brazil's monthly waste emissions for 2023.",
+      "expected_structure": {
+        "location": "Brazil",
+        "sector": "waste",
+        "year": 2023,
+        "grain": "month"
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 17,
+      "category": "comparative",
+      "sector": "waste",
+      "level": "city",
+      "grain": "year",
+      "question": "Compare waste emissions between New York City and Los Angeles in 2022.",
+      "expected_structure": {
+        "locations": ["New York City", "Los Angeles"],
+        "sector": "waste",
+        "year": 2022,
+        "comparison": true
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 18,
+      "category": "temporal",
+      "sector": "waste",
+      "level": "country",
+      "grain": "year",
+      "question": "Calculate the percentage change in UK's waste emissions from 2020 to 2023.",
+      "expected_structure": {
+        "location": "United Kingdom",
+        "sector": "waste",
+        "years": [2020, 2023],
+        "metric": "percentage_change"
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 19,
+      "category": "simple",
+      "sector": "agriculture",
+      "level": "country",
+      "grain": "year",
+      "question": "What were India's agricultural emissions in 2022?",
+      "expected_structure": {
+        "location": "India",
+        "sector": "agriculture",
+        "year": 2022,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 20,
+      "category": "simple",
+      "sector": "agriculture",
+      "level": "admin1",
+      "grain": "year",
+      "question": "How much CO2 did Iowa emit from agriculture in 2023?",
+      "expected_structure": {
+        "location": "Iowa",
+        "sector": "agriculture",
+        "year": 2023,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 21,
+      "category": "simple",
+      "sector": "agriculture",
+      "level": "city",
+      "grain": "year",
+      "question": "Show agricultural emissions for São Paulo in 2021.",
+      "expected_structure": {
+        "location": "São Paulo",
+        "sector": "agriculture",
+        "year": 2021,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 22,
+      "category": "temporal",
+      "sector": "agriculture",
+      "level": "country",
+      "grain": "month",
+      "question": "What were Australia's monthly agricultural emissions in 2023?",
+      "expected_structure": {
+        "location": "Australia",
+        "sector": "agriculture",
+        "year": 2023,
+        "grain": "month"
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 23,
+      "category": "comparative",
+      "sector": "agriculture",
+      "level": "country",
+      "grain": "year",
+      "question": "Rank the top 5 countries by agricultural emissions in 2022.",
+      "expected_structure": {
+        "sector": "agriculture",
+        "year": 2022,
+        "ranking": true,
+        "limit": 5
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": 24,
+      "category": "temporal",
+      "sector": "agriculture",
+      "level": "admin1",
+      "grain": "year",
+      "question": "Show the trend in agricultural emissions for California from 2019 to 2023.",
+      "expected_structure": {
+        "location": "California",
+        "sector": "agriculture",
+        "years": [2019, 2020, 2021, 2022, 2023],
+        "trend": true
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 25,
+      "category": "simple",
+      "sector": "buildings",
+      "level": "country",
+      "grain": "year",
+      "question": "What were Canada's building sector emissions in 2023?",
+      "expected_structure": {
+        "location": "Canada",
+        "sector": "buildings",
+        "year": 2023,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 26,
+      "category": "simple",
+      "sector": "buildings",
+      "level": "admin1",
+      "grain": "year",
+      "question": "How much did New York state emit from buildings in 2022?",
+      "expected_structure": {
+        "location": "New York",
+        "sector": "buildings",
+        "year": 2022,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 27,
+      "category": "simple",
+      "sector": "buildings",
+      "level": "city",
+      "grain": "year",
+      "question": "Show building emissions for Paris in 2021.",
+      "expected_structure": {
+        "location": "Paris",
+        "sector": "buildings",
+        "year": 2021,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 28,
+      "category": "temporal",
+      "sector": "buildings",
+      "level": "country",
+      "grain": "month",
+      "question": "What were UK's monthly building emissions for Q4 2023 (October, November, December)?",
+      "expected_structure": {
+        "location": "United Kingdom",
+        "sector": "buildings",
+        "year": 2023,
+        "months": [10, 11, 12],
+        "grain": "month"
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 29,
+      "category": "comparative",
+      "sector": "buildings",
+      "level": "city",
+      "grain": "year",
+      "question": "Compare building sector emissions between Chicago and Houston in 2022.",
+      "expected_structure": {
+        "locations": ["Chicago", "Houston"],
+        "sector": "buildings",
+        "year": 2022,
+        "comparison": true
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 30,
+      "category": "temporal",
+      "sector": "buildings",
+      "level": "country",
+      "grain": "year",
+      "question": "Calculate year-over-year change in building emissions for Germany from 2021 to 2022.",
+      "expected_structure": {
+        "location": "Germany",
+        "sector": "buildings",
+        "years": [2021, 2022],
+        "metric": "yoy_change"
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 31,
+      "category": "simple",
+      "sector": "fuel-exploitation",
+      "level": "country",
+      "grain": "year",
+      "question": "What were Russia's fuel exploitation emissions in 2022?",
+      "expected_structure": {
+        "location": "Russia",
+        "sector": "fuel-exploitation",
+        "year": 2022,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 32,
+      "category": "simple",
+      "sector": "fuel-exploitation",
+      "level": "admin1",
+      "grain": "year",
+      "question": "How much CO2 did Alberta emit from fuel exploitation in 2023?",
+      "expected_structure": {
+        "location": "Alberta",
+        "sector": "fuel-exploitation",
+        "year": 2023,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 33,
+      "category": "temporal",
+      "sector": "fuel-exploitation",
+      "level": "country",
+      "grain": "month",
+      "question": "Show monthly fuel exploitation emissions for Saudi Arabia in 2023.",
+      "expected_structure": {
+        "location": "Saudi Arabia",
+        "sector": "fuel-exploitation",
+        "year": 2023,
+        "grain": "month"
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 34,
+      "category": "comparative",
+      "sector": "fuel-exploitation",
+      "level": "country",
+      "grain": "year",
+      "question": "Compare fuel exploitation emissions between USA, Russia, and Saudi Arabia in 2022.",
+      "expected_structure": {
+        "locations": ["United States of America", "Russia", "Saudi Arabia"],
+        "sector": "fuel-exploitation",
+        "year": 2022,
+        "comparison": true
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 35,
+      "category": "temporal",
+      "sector": "fuel-exploitation",
+      "level": "country",
+      "grain": "year",
+      "question": "What's the trend in fuel exploitation emissions for Norway from 2020 to 2023?",
+      "expected_structure": {
+        "location": "Norway",
+        "sector": "fuel-exploitation",
+        "years": [2020, 2021, 2022, 2023],
+        "trend": true
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 36,
+      "category": "simple",
+      "sector": "fuel-exploitation",
+      "level": "city",
+      "grain": "year",
+      "question": "Show fuel exploitation emissions for Houston in 2022.",
+      "expected_structure": {
+        "location": "Houston",
+        "sector": "fuel-exploitation",
+        "year": 2022,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 37,
+      "category": "simple",
+      "sector": "industrial-combustion",
+      "level": "country",
+      "grain": "year",
+      "question": "What were China's industrial combustion emissions in 2023?",
+      "expected_structure": {
+        "location": "China",
+        "sector": "industrial-combustion",
+        "year": 2023,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 38,
+      "category": "simple",
+      "sector": "industrial-combustion",
+      "level": "admin1",
+      "grain": "year",
+      "question": "How much did Pennsylvania emit from industrial combustion in 2022?",
+      "expected_structure": {
+        "location": "Pennsylvania",
+        "sector": "industrial-combustion",
+        "year": 2022,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 39,
+      "category": "simple",
+      "sector": "industrial-combustion",
+      "level": "city",
+      "grain": "year",
+      "question": "Show industrial combustion emissions for Shanghai in 2021.",
+      "expected_structure": {
+        "location": "Shanghai",
+        "sector": "industrial-combustion",
+        "year": 2021,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 40,
+      "category": "temporal",
+      "sector": "industrial-combustion",
+      "level": "country",
+      "grain": "month",
+      "question": "What were India's monthly industrial combustion emissions for the first quarter of 2023?",
+      "expected_structure": {
+        "location": "India",
+        "sector": "industrial-combustion",
+        "year": 2023,
+        "months": [1, 2, 3],
+        "grain": "month"
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 41,
+      "category": "comparative",
+      "sector": "industrial-combustion",
+      "level": "admin1",
+      "grain": "year",
+      "question": "Which state in the USA had the highest industrial combustion emissions in 2022?",
+      "expected_structure": {
+        "level": "admin1",
+        "country": "United States of America",
+        "sector": "industrial-combustion",
+        "year": 2022,
+        "ranking": true
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 42,
+      "category": "temporal",
+      "sector": "industrial-combustion",
+      "level": "country",
+      "grain": "year",
+      "question": "Show the trend in industrial combustion emissions for Japan from 2019 to 2023.",
+      "expected_structure": {
+        "location": "Japan",
+        "sector": "industrial-combustion",
+        "years": [2019, 2020, 2021, 2022, 2023],
+        "trend": true
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 43,
+      "category": "simple",
+      "sector": "industrial-processes",
+      "level": "country",
+      "grain": "year",
+      "question": "What were South Korea's industrial processes emissions in 2022?",
+      "expected_structure": {
+        "location": "South Korea",
+        "sector": "industrial-processes",
+        "year": 2022,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 44,
+      "category": "simple",
+      "sector": "industrial-processes",
+      "level": "admin1",
+      "grain": "year",
+      "question": "How much did Michigan emit from industrial processes in 2023?",
+      "expected_structure": {
+        "location": "Michigan",
+        "sector": "industrial-processes",
+        "year": 2023,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 45,
+      "category": "simple",
+      "sector": "industrial-processes",
+      "level": "city",
+      "grain": "year",
+      "question": "Show industrial processes emissions for Seoul in 2021.",
+      "expected_structure": {
+        "location": "Seoul",
+        "sector": "industrial-processes",
+        "year": 2021,
+        "unit": "MtCO2"
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": 46,
+      "category": "temporal",
+      "sector": "industrial-processes",
+      "level": "country",
+      "grain": "month",
+      "question": "What were Mexico's monthly industrial processes emissions in 2023?",
+      "expected_structure": {
+        "location": "Mexico",
+        "sector": "industrial-processes",
+        "year": 2023,
+        "grain": "month"
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 47,
+      "category": "comparative",
+      "sector": "industrial-processes",
+      "level": "country",
+      "grain": "year",
+      "question": "Compare industrial processes emissions between Germany, France, and Italy in 2022.",
+      "expected_structure": {
+        "locations": ["Germany", "France", "Italy"],
+        "sector": "industrial-processes",
+        "year": 2022,
+        "comparison": true
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": 48,
+      "category": "complex",
+      "sector": "multiple",
+      "level": "country",
+      "grain": "year",
+      "question": "What are the total emissions from all sectors for Germany in 2023?",
+      "expected_structure": {
+        "location": "Germany",
+        "sectors": "all",
+        "year": 2023,
+        "aggregation": "total"
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": 49,
+      "category": "complex",
+      "sector": "multiple",
+      "level": "country",
+      "grain": "year",
+      "question": "Which sector contributed the most emissions in the United States in 2022?",
+      "expected_structure": {
+        "location": "United States of America",
+        "sectors": "all",
+        "year": 2022,
+        "ranking": true,
+        "metric": "by_sector"
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": 50,
+      "category": "complex",
+      "sector": "multiple",
+      "level": "admin1",
+      "grain": "month",
+      "question": "Compare monthly power and transport emissions for California in 2023 and tell me which sector was higher on average.",
+      "expected_structure": {
+        "location": "California",
+        "sectors": ["power", "transport"],
+        "year": 2023,
+        "grain": "month",
+        "comparison": true,
+        "aggregation": "average"
+      },
+      "difficulty": "hard"
+    }
+  ],
+  "coverage_summary": {
+    "by_sector": {
+      "transport": 6,
+      "power": 6,
+      "waste": 6,
+      "agriculture": 6,
+      "buildings": 6,
+      "fuel-exploitation": 6,
+      "industrial-combustion": 6,
+      "industrial-processes": 5,
+      "multiple": 3
+    },
+    "by_level": {
+      "country": 28,
+      "admin1": 13,
+      "city": 9
+    },
+    "by_grain": {
+      "year": 38,
+      "month": 12
+    },
+    "by_category": {
+      "simple": 26,
+      "temporal": 14,
+      "comparative": 7,
+      "complex": 3
+    },
+    "by_difficulty": {
+      "easy": 26,
+      "medium": 21,
+      "hard": 3
+    }
+  },
+  "notes": [
+    "Questions are designed to test both factual accuracy and query understanding",
+    "Monthly questions test temporal grain handling",
+    "Comparative questions test multi-location queries",
+    "Complex questions test multi-sector aggregation",
+    "Location names vary (USA vs United States of America) to test normalization",
+    "Some questions use informal language to test intent parsing robustness"
+  ]
+}

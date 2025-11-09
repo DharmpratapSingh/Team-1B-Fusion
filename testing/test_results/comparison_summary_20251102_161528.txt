@@ -1,0 +1,19 @@
+================================================================================
+LLM COMPARISON SUMMARY (Same Backend)
+================================================================================
+
+Test Date: 2025-11-02T16:15:28.007046
+Total Questions: 1
+
+
+DEFAULT:
+  Success Rate: 100.0%
+  Avg Response Time: 7103.8ms
+  Tool Call Rate: 100.0%
+  Answer Rate: 100.0%
+
+LLAMA_Q5KM:
+  Success Rate: 100.0%
+  Avg Response Time: 37970.1ms
+  Tool Call Rate: 100.0%
+  Answer Rate: 100.0%

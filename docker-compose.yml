@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    ports:
+      - "8010:8010"
+    environment:
+      - PORT=8010
+      - MCP_MANIFEST_PATH=data/curated-2/manifest_mcp_duckdb.json
+  ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    ports:
+      - "8501:8501"
+    environment:
+      - MCP_URL=http://server:8010
+    depends_on:
+      - server

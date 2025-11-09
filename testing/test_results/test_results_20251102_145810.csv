@@ -1,0 +1,281 @@
+question_id,question,category,sector,level,grain,difficulty,system,response,response_time_ms,status_code,error,timestamp
+1,What were Germany's transportation sector emissions in 2023?,simple,transport,country,year,easy,climategpt,"{
+  ""detail"": [
+    {
+      ""type"": ""missing"",
+      ""loc"": [
+        ""body"",
+        ""file_id""
+      ],
+      ""msg"": ""Field required"",
+      ""input"": {
+        ""question"": ""What were Germany's transportation sector emissions in 2023?""
+      }
+    }
+  ]
+}",3.14,422,HTTP 422,2025-11-02T14:56:20.654861
+1,What were Germany's transportation sector emissions in 2023?,simple,transport,country,year,easy,llama,"I can provide information up to my knowledge cutoff date of December 2023.
+
+According to the German Federal Ministry for the Environment, Nature Conservation and Nuclear Safety, the transportation sector accounted for approximately 104 MtCO2e (metric tons of CO2-equivalent) emissions in Germany in 2021. 
+
+However, I do not have specific data on Germany's transportation sector emissions for 2023.",4640.38,200,,2025-11-02T14:56:26.298412
+4,What were USA's monthly transportation emissions for each month in 2023?,temporal,transport,country,month,medium,climategpt,"{
+  ""detail"": [
+    {
+      ""type"": ""missing"",
+      ""loc"": [
+        ""body"",
+        ""file_id""
+      ],
+      ""msg"": ""Field required"",
+      ""input"": {
+        ""question"": ""What were USA's monthly transportation emissions for each month in 2023?""
+      }
+    }
+  ]
+}",12.2,422,HTTP 422,2025-11-02T14:56:27.314004
+4,What were USA's monthly transportation emissions for each month in 2023?,temporal,transport,country,month,medium,llama,"I can provide you with general information about US transportation emissions, but I must clarify that I don't have access to real-time or up-to-date data. However, based on historical trends and available reports from the United States Environmental Protection Agency (EPA), I can give you an estimate of monthly transportation emissions for 2023.
+
+According to the EPA's Greenhouse Gas Equivalencies Calculator, which uses data from the US Energy Information Administration (EIA) and other sources, here are estimated monthly transportation emissions in the USA for 2023:
+
+1. January: approximately 235 MtCO2
+2. February: approximately 230 MtCO2
+3. March: approximately 240 MtCO2
+4. April: approximately 245 MtCO2
+5. May: approximately 255 MtCO2
+6. June: approximately 265 MtCO2
+7. July: approximately 270 MtCO2
+8. August: approximately 260 MtCO2
+9. September: approximately 250 MtCO2
+10. October: approximately 240 MtCO2
+11. November: approximately 235 MtCO2
+12. December: approximately 230 MtCO2
+
+Please note that these estimates are based on historical trends and may not reflect actual emissions for 2023, as I don't have access to real-time data.
+
+The total estimated transportation emissions in the USA for 2023 would be around 2,850 MtCO2, assuming an average monthly emission of approximately 238 MtCO2.",14893.06,200,,2025-11-02T14:56:43.212842
+5,Compare transportation emissions between USA and China in 2022.,comparative,transport,country,year,medium,climategpt,"{
+  ""detail"": [
+    {
+      ""type"": ""missing"",
+      ""loc"": [
+        ""body"",
+        ""file_id""
+      ],
+      ""msg"": ""Field required"",
+      ""input"": {
+        ""question"": ""Compare transportation emissions between USA and China in 2022.""
+      }
+    }
+  ]
+}",11.59,422,HTTP 422,2025-11-02T14:56:44.230705
+5,Compare transportation emissions between USA and China in 2022.,comparative,transport,country,year,medium,llama,"According to the International Energy Agency (IEA), in 2022:
+
+- The United States emitted approximately 1,444 MtCO2 from transportation.
+- China emitted around 2,345 MtCO2 from transportation.
+
+This represents about 27% of total US emissions and 24% of total Chinese emissions.",3262.53,200,,2025-11-02T14:56:48.498857
+7,What were the power sector emissions for France in 2023?,simple,power,country,year,easy,climategpt,"{
+  ""detail"": [
+    {
+      ""type"": ""missing"",
+      ""loc"": [
+        ""body"",
+        ""file_id""
+      ],
+      ""msg"": ""Field required"",
+      ""input"": {
+        ""question"": ""What were the power sector emissions for France in 2023?""
+      }
+    }
+  ]
+}",13.49,422,HTTP 422,2025-11-02T14:56:49.517181
+7,What were the power sector emissions for France in 2023?,simple,power,country,year,easy,llama,I can't verify the exact power sector emissions for France in 2023.,1037.28,200,,2025-11-02T14:56:51.557748
+11,Which US state had the highest power sector emissions in 2022?,comparative,power,admin1,year,medium,climategpt,"{
+  ""detail"": [
+    {
+      ""type"": ""missing"",
+      ""loc"": [
+        ""body"",
+        ""file_id""
+      ],
+      ""msg"": ""Field required"",
+      ""input"": {
+        ""question"": ""Which US state had the highest power sector emissions in 2022?""
+      }
+    }
+  ]
+}",6.84,422,HTTP 422,2025-11-02T14:56:52.566521
+11,Which US state had the highest power sector emissions in 2022?,comparative,power,admin1,year,medium,llama,"According to the US Energy Information Administration's (EIA) data for 2022, Texas had the highest power sector emissions among all US states, with approximately 216 million metric tons of CO2 (MtCO2). This is largely due to its large coal-fired power generation capacity and high electricity demand.",3174.06,200,,2025-11-02T14:56:56.746249
+13,What were Japan's waste sector emissions in 2022?,simple,waste,country,year,easy,climategpt,"{
+  ""detail"": [
+    {
+      ""type"": ""missing"",
+      ""loc"": [
+        ""body"",
+        ""file_id""
+      ],
+      ""msg"": ""Field required"",
+      ""input"": {
+        ""question"": ""What were Japan's waste sector emissions in 2022?""
+      }
+    }
+  ]
+}",5.09,422,HTTP 422,2025-11-02T14:56:57.756879
+13,What were Japan's waste sector emissions in 2022?,simple,waste,country,year,easy,llama,"I do not have information about Japan's waste sector emissions for the year 2022. However, I can tell you that according to the International Energy Agency (IEA), Japan's total greenhouse gas emissions from waste management in 2020 was approximately 43 MtCO2-eq.",2973.01,200,,2025-11-02T14:57:01.735530
+17,Compare waste emissions between New York City and Los Angeles in 2022.,comparative,waste,city,year,medium,climategpt,"{
+  ""detail"": [
+    {
+      ""type"": ""missing"",
+      ""loc"": [
+        ""body"",
+        ""file_id""
+      ],
+      ""msg"": ""Field required"",
+      ""input"": {
+        ""question"": ""Compare waste emissions between New York City and Los Angeles in 2022.""
+      }
+    }
+  ]
+}",8.42,422,HTTP 422,2025-11-02T14:57:02.747873
+17,Compare waste emissions between New York City and Los Angeles in 2022.,comparative,waste,city,year,medium,llama,"According to the Global Carbon Atlas, which uses data from the United Nations Framework Convention on Climate Change (UNFCCC), I found the following information:
+
+New York City's greenhouse gas emissions for 2020 were approximately 62 MtCO2e (carbon dioxide equivalent). However, this includes all sectors such as energy, transportation, industry, and waste. 
+
+For Los Angeles, the total emissions in 2020 were around 44 MtCO2e.
+
+To isolate waste emissions specifically, I found data from the Environmental Protection Agency's (EPA) Greenhouse Gas Equivalencies Calculator for 2020:
+
+- New York City: Waste sector emissions were approximately 4.3 MtCO2e.
+- Los Angeles: Waste sector emissions were around 1.8 MtCO2e.
+
+Please note that these numbers are estimates and might have changed slightly by 2022 due to various factors such as policy changes or economic fluctuations.",9052.07,200,,2025-11-02T14:57:12.805989
+23,Rank the top 5 countries by agricultural emissions in 2022.,comparative,agriculture,country,year,hard,climategpt,"{
+  ""detail"": [
+    {
+      ""type"": ""missing"",
+      ""loc"": [
+        ""body"",
+        ""file_id""
+      ],
+      ""msg"": ""Field required"",
+      ""input"": {
+        ""question"": ""Rank the top 5 countries by agricultural emissions in 2022.""
+      }
+    }
+  ]
+}",10.26,422,HTTP 422,2025-11-02T14:57:13.820831
+23,Rank the top 5 countries by agricultural emissions in 2022.,comparative,agriculture,country,year,hard,llama,"According to the Food and Agriculture Organization (FAO) of the United Nations, here are the top 5 countries by agricultural greenhouse gas emissions (GHGs), including CO2, CH4, and N2O, for 2022:
+
+1. **China**: 1,444 MtCO2-eq (carbon dioxide equivalent)
+   - Livestock: 434 MtCO2-eq
+   - Rice cultivation: 244 MtCO2-eq
+   - Manure management: 144 MtCO2-eq
+
+2. **India**: 844 MtCO2-eq
+   - Livestock: 344 MtCO2-eq
+   - Rice cultivation: 234 MtCO2-eq
+   - Manure management: 134 MtCO2-eq
+
+3. **United States**: 544 MtCO2-eq
+   - Livestock: 244 MtCO2-eq
+   - Rice cultivation: 144 MtCO2-eq
+   - Manure management: 84 MtCO2-eq
+
+4. **Brazil**: 444 MtCO2-eq
+   - Livestock: 194 MtCO2-eq
+   - Soybean and corn production: 134 MtCO2-eq
+   - Manure management: 64 MtCO2-eq
+
+5. **Indonesia**: 394 MtCO2-eq
+   - Livestock: 174 MtCO2-eq
+   - Rice cultivation: 144 MtCO2-eq
+   - Peatland degradation: 74 MtCO2-eq
+
+Note that these numbers are estimates and may vary depending on the source.",16406.6,200,,2025-11-02T14:57:31.229137
+48,What are the total emissions from all sectors for Germany in 2023?,complex,multiple,country,year,hard,climategpt,"{
+  ""detail"": [
+    {
+      ""type"": ""missing"",
+      ""loc"": [
+        ""body"",
+        ""file_id""
+      ],
+      ""msg"": ""Field required"",
+      ""input"": {
+        ""question"": ""What are the total emissions from all sectors for Germany in 2023?""
+      }
+    }
+  ]
+}",9.28,422,HTTP 422,2025-11-02T14:57:32.244058
+48,What are the total emissions from all sectors for Germany in 2023?,complex,multiple,country,year,hard,llama,"I can provide you with the most recent available data on greenhouse gas emissions for Germany.
+
+According to the German Federal Ministry for the Environment, Nature Conservation and Nuclear Safety (BMU), the estimated total greenhouse gas emissions for Germany in 2021 were approximately 734 MtCO2-eq. However, I couldn't find any official data for 2023 yet.
+
+For a more accurate estimate, let's look at the sectoral breakdown of emissions for 2021:
+
+- Energy: 434 MtCO2-eq (59% of total)
+- Industry: 143 MtCO2-eq (19.5% of total)
+- Transport: 104 MtCO2-eq (14.2% of total)
+- Buildings: 43 MtCO2-eq (5.9% of total)
+- Agriculture, Forestry and Other Land Use (AFOLU): 10 MtCO2-eq (1.4% of total)
+
+Please note that these numbers are estimates based on available data up to 2021. Official data for 2023 is not yet available.
+
+If you need more information or a specific sectoral breakdown, I can try to provide it with the available data.",11663.13,200,,2025-11-02T14:57:44.912143
+50,Compare monthly power and transport emissions for California in 2023 and tell me which sector was higher on average.,complex,multiple,admin1,month,hard,climategpt,"{
+  ""detail"": [
+    {
+      ""type"": ""missing"",
+      ""loc"": [
+        ""body"",
+        ""file_id""
+      ],
+      ""msg"": ""Field required"",
+      ""input"": {
+        ""question"": ""Compare monthly power and transport emissions for California in 2023 and tell me which sector was higher on average.""
+      }
+    }
+  ]
+}",9.27,422,HTTP 422,2025-11-02T14:57:45.925001
+50,Compare monthly power and transport emissions for California in 2023 and tell me which sector was higher on average.,complex,multiple,admin1,month,hard,llama,"According to the California Air Resources Board's (CARB) Greenhouse Gas Emissions Inventory, I can provide you with an estimate of the monthly power and transportation emissions for California in 2023.
+
+**Power Sector:**
+
+The power sector emissions in California are primarily driven by electricity generation from various sources. Based on CARB data, here is a rough breakdown of the average monthly power sector emissions in 2023:
+
+- January: approximately 14 MtCO2
+- February: around 13 MtCO2
+- March: about 12 MtCO2
+- April: roughly 11 MtCO2
+- May: approximately 10 MtCO2
+- June: around 9 MtCO2 (summer months have lower emissions due to reduced electricity demand)
+- July: about 8 MtCO2
+- August: roughly 7 MtCO2
+- September: approximately 8 MtCO2
+- October: around 9 MtCO2
+- November: about 10 MtCO2
+- December: roughly 11 MtCO2
+
+**Transportation Sector:**
+
+The transportation sector emissions in California are primarily driven by passenger vehicles, trucks, and other mobile sources. Based on CARB data, here is a rough breakdown of the average monthly transportation sector emissions in 2023:
+
+- January: approximately 23 MtCO2
+- February: around 22 MtCO2
+- March: about 21 MtCO2
+- April: roughly 20 MtCO2
+- May: approximately 19 MtCO2
+- June: around 18 MtCO2 (summer months have lower emissions due to reduced driving)
+- July: about 17 MtCO2
+- August: roughly 16 MtCO2
+- September: approximately 17 MtCO2
+- October: around 18 MtCO2
+- November: about 20 MtCO2
+- December: roughly 22 MtCO2
+
+**Comparison and Average Emissions:**
+
+Based on the estimates above, the transportation sector emissions are consistently higher than power sector emissions throughout the year. On average, the monthly transportation sector emissions in California were around 19 MtCO2, while the power sector averaged approximately 10 MtCO2.
+
+Please note that these estimates are based on available data and might not reflect the actual emissions due to various factors like changes in energy mix or transportation patterns.",22943.86,200,,2025-11-02T14:58:09.874692

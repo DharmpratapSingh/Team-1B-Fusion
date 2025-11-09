@@ -1,0 +1,64 @@
+{
+  "metadata": {
+    "test_date": "2025-11-02T16:15:28.007046",
+    "test_type": "automated_llm_comparison_same_backend",
+    "total_questions": 1,
+    "total_tests": 2
+  },
+  "summary_stats": {
+    "total_questions": 1,
+    "llm_stats": {
+      "default": {
+        "total_tests": 1,
+        "successes": 1,
+        "success_rate": 100.0,
+        "avg_response_time_ms": 7103.8,
+        "tool_call_rate": 100.0,
+        "answer_rate": 100.0
+      },
+      "llama_q5km": {
+        "total_tests": 1,
+        "successes": 1,
+        "success_rate": 100.0,
+        "avg_response_time_ms": 37970.1,
+        "tool_call_rate": 100.0,
+        "answer_rate": 100.0
+      }
+    }
+  },
+  "results": [
+    {
+      "question_id": 50,
+      "question": "Compare monthly power and transport emissions for California in 2023 and tell me which sector was higher on average.",
+      "category": "complex",
+      "sector": "multiple",
+      "level": "admin1",
+      "grain": "month",
+      "difficulty": "hard",
+      "llm_results": {
+        "default": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"power-admin1-month\",\"select\":[\"admin1_name\",\"year\",\"month\",\"emissions_tonnes\"],\"where\":{\"admin1_name\":\"California\",\"year\":2023}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-admin1-month\",\"select\":[\"admin1_name\",\"year\",\"month\",\"emissions_tonnes\"],\"where\":{\"admin1_name\":\"California\",\"year\":2023}}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n\n--- Result 1/2 ---\n{\n  \"rows\": [\n    {\n      \"admin1_name\": \"California\",\n      \"year\": 2023,\n      \"month\": 1,\n      \"emissions_tonnes\": 5863523.645654181\n    },\n    {\n      \"admin1_name\": \"California\",\n      \"year\": 2023,\n      \"month\": 2,\n      \"emissions_tonnes\": 5827110.70776794\n    },\n    {\n      \"admin1_name\": \"California\",\n      \"year\": 2023,\n      \"month\": 3,\n      \"emissions_tonnes\": 5165321.994350622\n    },\n    {\n      \"admin1_name\": \"California\",\n      ",
+          "answer": "In 2023, California's monthly power emissions were significantly higher than its transport emissions. The power sector's emissions were approximately 5.56 MtCO\u2082 in December 2023, while the transport sector's emissions were around 0.0095 MtCO\u2082 in January 2023. This substantial difference highlights the dominance of the power sector in California's emissions profile.",
+          "error": null,
+          "response_time_ms": 7103.82,
+          "timestamp": "2025-11-02T16:14:48.026212",
+          "has_tool_call": true,
+          "has_answer": true
+        },
+        "llama_q5km": {
+          "success": true,
+          "tool_call": "[{\"tool\":\"query\",\"args\":{\"file_id\":\"power-admin1-month\",\"select\":[\"admin1_name\",\"year\",\"month\",\"emissions_tonnes\"],\"where\":{\"admin1_name\":\"California\",\"year\":2023}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-admin1-month\",\"select\":[\"admin1_name\",\"year\",\"month\",\"emissions_tonnes\"],\"where\":{\"admin1_name\":\"California\",\"year\":2023}}}]",
+          "tool_result_preview": "(first 10 rows per query) ---\n\n--- Result 1/2 ---\n{\n  \"rows\": [\n    {\n      \"admin1_name\": \"California\",\n      \"year\": 2023,\n      \"month\": 1,\n      \"emissions_tonnes\": 5863523.645654181\n    },\n    {\n      \"admin1_name\": \"California\",\n      \"year\": 2023,\n      \"month\": 2,\n      \"emissions_tonnes\": 5827110.70776794\n    },\n    {\n      \"admin1_name\": \"California\",\n      \"year\": 2023,\n      \"month\": 3,\n      \"emissions_tonnes\": 5165321.994350622\n    },\n    {\n      \"admin1_name\": \"California\",\n      ",
+          "answer": "Transport sector emissions for California in 2023: \n- January: 5.863523645654181 MtCO\u2082\n- February: 5.8271107077679405 MtCO\u2082\n- March: 5.165321994350623 MtCO\u2082\n- April: 4.257595511364748 MtCO\u2082\n- May: 3.958829052022385 MtCO\u2082\n- June: 4.387699123752768 MtCO\u2082\n- July: 5.0567838852336155 MtCO\u2082\n- August: 5.082189182649274 MtCO\u2082\n- September: 4.637891092732845 MtCO\u2082\n- October: 4.6150656156499394 MtCO\u2082\n- November: 4.905812247168425 MtCO\u2082\n- December: 5.562468573795668 MtCO\u2082\n\nPower sector emissions for California in 2023:\n- January: 0.009563676959512428 MtCO\u2082\n- February: 0.010456760884536627 MtCO\u2082\n- March: 0.011176542983846413 MtCO\u2082\n- April: 0.01172639027744861 MtCO\u2082\n- May: 0.012651411840849964 MtCO\u2082\n- June: 0.013441392455955499 MtCO\u2082\n- July: 0.013912835066338322 MtCO\u2082\n- August: 0.013093622028977422 MtCO\u2082\n- September: 0.01190237899751442 MtCO\u2082\n- October: 0.010922542395747355 MtCO\u2082\n- November: 0.00998612053902679 MtCO\u2082\n- December: 0.009572487693219304 MtCO\u2082\n\nOn average, transport sector emissions were higher than power sector emissions in California for each month of 2023.",
+          "error": null,
+          "response_time_ms": 37970.08,
+          "timestamp": "2025-11-02T16:15:26.999162",
+          "has_tool_call": true,
+          "has_answer": true
+        }
+      }
+    }
+  ]
+}

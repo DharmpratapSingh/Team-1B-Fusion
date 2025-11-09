@@ -1,0 +1,361 @@
+{
+  "metadata": {
+    "test_date": "2025-11-02T15:44:02.264396",
+    "test_type": "automated_llm_comparison_same_backend",
+    "total_questions": 10,
+    "total_tests": 20
+  },
+  "summary_stats": {
+    "total_questions": 10,
+    "llm_stats": {
+      "default": {
+        "total_tests": 10,
+        "successes": 10,
+        "success_rate": 100.0,
+        "avg_response_time_ms": 3763.9,
+        "tool_call_rate": 100.0,
+        "answer_rate": 100.0
+      },
+      "llama_q5km": {
+        "total_tests": 10,
+        "successes": 10,
+        "success_rate": 100.0,
+        "avg_response_time_ms": 12388.0,
+        "tool_call_rate": 100.0,
+        "answer_rate": 100.0
+      }
+    }
+  },
+  "results": [
+    {
+      "question_id": 1,
+      "question": "What were Germany's transportation sector emissions in 2023?",
+      "category": "simple",
+      "sector": "transport",
+      "level": "country",
+      "grain": "year",
+      "difficulty": "easy",
+      "llm_results": {
+        "default": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n{\n  \"rows\": [\n    {\n      \"country_name\": \"Germany\",\n      \"year\": 2023,\n      \"emissions_tonnes\": 164426928.0\n    }\n  ],\n  \"row_count\": 1,\n  \"meta\": {\n    \"units\": [\n      \"tonnes CO2\"\n    ],\n    \"source\": \"EDGAR v2024\",\n    \"table_id\": \"transport-country-year\",\n    \"spatial_resolution\": null,\n    \"temporal_resolution\": null,\n    \"etag\": \"1175903b313a5895\",\n    \"query_patterns\": {\n      \"is_top_n\": false,\n      \"is_comparison\": false,\n      \"is_trend\": true,\n      ",
+          "answer": "Germany's transportation sector emissions in 2023 were 164.43 MtCO\u2082.",
+          "error": null,
+          "response_time_ms": 3397.06,
+          "timestamp": "2025-11-02T15:41:03.955015",
+          "has_tool_call": true,
+          "has_answer": true
+        },
+        "llama_q5km": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n{\n  \"rows\": [\n    {\n      \"country_name\": \"Germany\",\n      \"year\": 2023,\n      \"emissions_tonnes\": 164426928.0\n    }\n  ],\n  \"row_count\": 1,\n  \"meta\": {\n    \"units\": [\n      \"tonnes CO2\"\n    ],\n    \"source\": \"EDGAR v2024\",\n    \"table_id\": \"transport-country-year\",\n    \"spatial_resolution\": null,\n    \"temporal_resolution\": null,\n    \"etag\": \"1175903b313a5895\",\n    \"query_patterns\": {\n      \"is_top_n\": false,\n      \"is_comparison\": false,\n      \"is_trend\": true,\n      ",
+          "answer": "Germany's transportation sector emissions in 2023 were 164,426,928 tonnes CO2. This is equivalent to 164.43 MtCO\u2082. \n\nSource: transport-country-year, EDGAR v2024",
+          "error": null,
+          "response_time_ms": 11194.96,
+          "timestamp": "2025-11-02T15:41:16.155691",
+          "has_tool_call": true,
+          "has_answer": true
+        }
+      }
+    },
+    {
+      "question_id": 4,
+      "question": "What were USA's monthly transportation emissions for each month in 2023?",
+      "category": "temporal",
+      "sector": "transport",
+      "level": "country",
+      "grain": "month",
+      "difficulty": "medium",
+      "llm_results": {
+        "default": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-country-month\",\"select\":[\"country_name\",\"year\",\"month\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"USA\",\"year\":2023}}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n{\n  \"rows\": [\n    {\n      \"country_name\": \"United States of America\",\n      \"year\": 2023,\n      \"month\": 1,\n      \"emissions_tonnes\": 131313690.24445462\n    },\n    {\n      \"country_name\": \"United States of America\",\n      \"year\": 2023,\n      \"month\": 2,\n      \"emissions_tonnes\": 137474302.9555538\n    },\n    {\n      \"country_name\": \"United States of America\",\n      \"year\": 2023,\n      \"month\": 3,\n      \"emissions_tonnes\": 146804406.35377404\n    },\n    {\n      \"countr",
+          "answer": "The United States of America's monthly transportation emissions for 2023 were as follows:\n\n- January: 131.31 MtCO\u2082\n- February: 137.47 MtCO\u2082\n- March: 146.80 MtCO\u2082\n- April: 157.74 MtCO\u2082\n- May: 154.51 MtCO\u2082\n- June: 164.85 MtCO\u2082\n- July: 176.58 MtCO\u2082\n- August: 169.14 MtCO\u2082\n- September: 149.40 MtCO\u2082\n- October: 145.11 MtCO\u2082\n- November: 136.71 MtCO\u2082\n- December: 121.23 MtCO\u2082\n\nThese values represent the total emissions from the transportation sector in each month of 2023.",
+          "error": null,
+          "response_time_ms": 5527.67,
+          "timestamp": "2025-11-02T15:41:22.690038",
+          "has_tool_call": true,
+          "has_answer": true
+        },
+        "llama_q5km": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-country-month\",\"select\":[\"month\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"USA\",\"year\":2023}}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n{\n  \"rows\": [\n    {\n      \"month\": 1,\n      \"emissions_tonnes\": 131313690.24445462\n    },\n    {\n      \"month\": 2,\n      \"emissions_tonnes\": 137474302.9555538\n    },\n    {\n      \"month\": 3,\n      \"emissions_tonnes\": 146804406.35377404\n    },\n    {\n      \"month\": 4,\n      \"emissions_tonnes\": 157738062.36714888\n    },\n    {\n      \"month\": 5,\n      \"emissions_tonnes\": 154510874.86707017\n    },\n    {\n      \"month\": 6,\n      \"emissions_tonnes\": 164852485.00544658\n    },\n ",
+          "answer": "USA's monthly transportation emissions for each month in 2023 were:\n- January: 131.313690 MtCO2\n- February: 137.474302 MtCO2 (higher than January by 6.160612 MtCO2)\n- March: 146.804406 MtCO2 (higher than February by 9.330104 MtCO2)\n- April: 157.738062 MtCO2 (higher than March by 10.933656 MtCO2)\n- May: 154.510874 MtCO2 (lower than April by 3.227188 MtCO2)\n- June: 164.852485 MtCO2 (higher than May by 10.341611 MtCO2)\n- July: 176.578366 MtCO2 (higher than June by 11.725881 MtCO2)\n- August: 169.135226 MtCO2 (lower than July by 7.44314 MtCO2)\n- September: 149.402531 MtCO2 (lower than August by 19.732695 MtCO2)\n- October: 145.106278 MtCO2 (lower than September by 4.296253 MtCO2)\n- November: 136.707714 MtCO2 (lower than October by 8.398564 MtCO2)\n- December: 121.226584 MtCO2 (lower than November by 15.48013 MtCO2)\n\nSource: transport-country-month, EDGAR v2024",
+          "error": null,
+          "response_time_ms": 25405.25,
+          "timestamp": "2025-11-02T15:41:49.106446",
+          "has_tool_call": true,
+          "has_answer": true
+        }
+      }
+    },
+    {
+      "question_id": 5,
+      "question": "Compare transportation emissions between USA and China in 2022.",
+      "category": "comparative",
+      "sector": "transport",
+      "level": "country",
+      "grain": "year",
+      "difficulty": "medium",
+      "llm_results": {
+        "default": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"USA\",\"year\":2022}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"China\",\"year\":2022}}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n{\n  \"error\": \"Model did not return valid JSON tool call.\",\n  \"raw\": \"{\\\"tool\\\":\\\"query\\\",\\\"args\\\":{\\\"file_id\\\":\\\"transport-country-year\\\",\\\"select\\\":[\\\"country_name\\\",\\\"year\\\",\\\"emissions_tonnes\\\"],\\\"where\\\":{\\\"country_name\\\":\\\"USA\\\",\\\"year\\\":2022}}},{\\\"tool\\\":\\\"query\\\",\\\"args\\\":{\\\"file_id\\\":\\\"transport-country-year\\\",\\\"select\\\":[\\\"country_name\\\",\\\"year\\\",\\\"emissions_tonnes\\\"],\\\"where\\\":{\\\"country_name\\\":\\\"China\\\",\\\"year\\\":2022}}}\"\n}",
+          "answer": "Unable to retrieve data: Model did not return valid JSON tool call.. Please check the query parameters or use /get_schema to verify column names.",
+          "error": null,
+          "response_time_ms": 2166.01,
+          "timestamp": "2025-11-02T15:41:52.284418",
+          "has_tool_call": true,
+          "has_answer": true
+        },
+        "llama_q5km": {
+          "success": true,
+          "tool_call": "[{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"USA\",\"year\":2022}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"China\",\"year\":2022}}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n{\n  \"error\": \"Model did not return valid JSON tool call.\",\n  \"raw\": \"[{\\\"tool\\\":\\\"query\\\",\\\"args\\\":{\\\"file_id\\\":\\\"transport-country-year\\\",\\\"select\\\":[\\\"country_name\\\",\\\"year\\\",\\\"emissions_tonnes\\\"],\\\"where\\\":{\\\"country_name\\\":\\\"USA\\\",\\\"year\\\":2022}}},{\\\"tool\\\":\\\"query\\\",\\\"args\\\":{\\\"file_id\\\":\\\"transport-country-year\\\",\\\"select\\\":[\\\"country_name\\\",\\\"year\\\",\\\"emissions_tonnes\\\"],\\\"where\\\":{\\\"country_name\\\":\\\"China\\\",\\\"year\\\":2022}}}\"\n}",
+          "answer": "Unable to retrieve data: Model did not return valid JSON tool call.. Please check the query parameters or use /get_schema to verify column names.",
+          "error": null,
+          "response_time_ms": 9468.36,
+          "timestamp": "2025-11-02T15:42:02.763802",
+          "has_tool_call": true,
+          "has_answer": true
+        }
+      }
+    },
+    {
+      "question_id": 7,
+      "question": "What were the power sector emissions for France in 2023?",
+      "category": "simple",
+      "sector": "power",
+      "level": "country",
+      "grain": "year",
+      "difficulty": "easy",
+      "llm_results": {
+        "default": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"power-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"France\",\"year\":2023}}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n{\n  \"rows\": [\n    {\n      \"country_name\": \"France\",\n      \"year\": 2023,\n      \"emissions_tonnes\": 22704925.491659164\n    }\n  ],\n  \"row_count\": 1,\n  \"meta\": {\n    \"units\": [\n      \"tonnes CO2\"\n    ],\n    \"source\": \"EDGAR v2024\",\n    \"table_id\": \"power-country-year\",\n    \"spatial_resolution\": null,\n    \"temporal_resolution\": null,\n    \"etag\": \"b3ab3c51be9fc266\",\n    \"query_patterns\": {\n      \"is_top_n\": false,\n      \"is_comparison\": false,\n      \"is_trend\": true,\n    ",
+          "answer": "The power sector emissions for France in 2023 were 22.704925491659164 MtCO\u2082. This value is derived from the emissions data provided in the JSON format, which includes the country name, year, and emissions value in tonnes of CO2. The value has been converted to MtCO\u2082 by dividing the tonnes by 1,000,000. The source of the data is \"power-country-year, EDGAR v2024\".",
+          "error": null,
+          "response_time_ms": 3787.46,
+          "timestamp": "2025-11-02T15:42:07.557673",
+          "has_tool_call": true,
+          "has_answer": true
+        },
+        "llama_q5km": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"power-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"France\",\"year\":2023}}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n{\n  \"rows\": [\n    {\n      \"country_name\": \"France\",\n      \"year\": 2023,\n      \"emissions_tonnes\": 22704925.491659164\n    }\n  ],\n  \"row_count\": 1,\n  \"meta\": {\n    \"units\": [\n      \"tonnes CO2\"\n    ],\n    \"source\": \"EDGAR v2024\",\n    \"table_id\": \"power-country-year\",\n    \"spatial_resolution\": null,\n    \"temporal_resolution\": null,\n    \"etag\": \"b3ab3c51be9fc266\",\n    \"query_patterns\": {\n      \"is_top_n\": false,\n      \"is_comparison\": false,\n      \"is_trend\": true,\n    ",
+          "answer": "The power sector emissions for France in 2023 were 22.7 MtCO\u2082. \nThis is the only value provided in the data.\n\nSource: Source: power-country-year, EDGAR v2024",
+          "error": null,
+          "response_time_ms": 6078.78,
+          "timestamp": "2025-11-02T15:42:14.647152",
+          "has_tool_call": true,
+          "has_answer": true
+        }
+      }
+    },
+    {
+      "question_id": 11,
+      "question": "Which US state had the highest power sector emissions in 2022?",
+      "category": "comparative",
+      "sector": "power",
+      "level": "admin1",
+      "grain": "year",
+      "difficulty": "medium",
+      "llm_results": {
+        "default": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"power-admin1-year\",\"select\":[\"admin1_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"year\":2022},\"order_by\":\"emissions_tonnes DESC\",\"limit\":1}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n{\n  \"rows\": [\n    {\n      \"admin1_name\": \"Inner Mongol\",\n      \"year\": 2022,\n      \"emissions_tonnes\": 519946755.47265625\n    }\n  ],\n  \"row_count\": 1,\n  \"meta\": {\n    \"units\": [\n      \"tonnes CO2\"\n    ],\n    \"source\": \"EDGAR v2024\",\n    \"table_id\": \"power-admin1-year\",\n    \"spatial_resolution\": null,\n    \"temporal_resolution\": null,\n    \"etag\": \"af770aac5d168cd0\",\n    \"query_patterns\": {\n      \"is_top_n\": true,\n      \"is_comparison\": false,\n      \"is_trend\": true,\n ",
+          "answer": "The Inner Mongol region had the highest power sector emissions in 2022, with a total of 519.9467554726563 MtCO\u2082. This value is significantly higher than other regions, highlighting the importance of the Inner Mongol region in terms of power sector emissions.",
+          "error": null,
+          "response_time_ms": 3355.12,
+          "timestamp": "2025-11-02T15:42:19.013563",
+          "has_tool_call": true,
+          "has_answer": true
+        },
+        "llama_q5km": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"power-admin1-year\",\"select\":[\"admin1_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"year\":2022},\"order_by\":\"emissions_tonnes DESC\",\"limit\":1}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n{\n  \"rows\": [\n    {\n      \"admin1_name\": \"Inner Mongol\",\n      \"year\": 2022,\n      \"emissions_tonnes\": 519946755.47265625\n    }\n  ],\n  \"row_count\": 1,\n  \"meta\": {\n    \"units\": [\n      \"tonnes CO2\"\n    ],\n    \"source\": \"EDGAR v2024\",\n    \"table_id\": \"power-admin1-year\",\n    \"spatial_resolution\": null,\n    \"temporal_resolution\": null,\n    \"etag\": \"af770aac5d168cd0\",\n    \"query_patterns\": {\n      \"is_top_n\": true,\n      \"is_comparison\": false,\n      \"is_trend\": true,\n ",
+          "answer": "The US state with the highest power sector emissions in 2022 had 519,947 MtCO\u2082 emissions. \nThis value is significantly higher than other reported values.\nSource: \"Source: power-admin1-year, EDGAR v2024\"",
+          "error": null,
+          "response_time_ms": 11841.37,
+          "timestamp": "2025-11-02T15:42:31.866001",
+          "has_tool_call": true,
+          "has_answer": true
+        }
+      }
+    },
+    {
+      "question_id": 13,
+      "question": "What were Japan's waste sector emissions in 2022?",
+      "category": "simple",
+      "sector": "waste",
+      "level": "country",
+      "grain": "year",
+      "difficulty": "easy",
+      "llm_results": {
+        "default": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"waste-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"Japan\",\"year\":2022}}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n{\n  \"rows\": [\n    {\n      \"country_name\": \"Japan\",\n      \"year\": 2022,\n      \"emissions_tonnes\": 2933328.6096820235\n    }\n  ],\n  \"row_count\": 1,\n  \"meta\": {\n    \"units\": [\n      \"tonnes CO2\"\n    ],\n    \"source\": \"EDGAR v2024\",\n    \"table_id\": \"waste-country-year\",\n    \"spatial_resolution\": null,\n    \"temporal_resolution\": null,\n    \"etag\": \"6b66495a130c2b63\",\n    \"query_patterns\": {\n      \"is_top_n\": false,\n      \"is_comparison\": false,\n      \"is_trend\": true,\n     ",
+          "answer": "Japan's waste sector emissions in 2022 were 2.93 MtCO\u2082. This value is derived from the country's waste sector emissions data, which is sourced from the EDGAR v2024 database. The data is presented in tonnes of CO\u2082, and the value has been converted to MtCO\u2082 by dividing it by 1,000,000. The waste sector emissions data for Japan in 2022 is part of a larger dataset that includes emissions data for other countries and years. The data is used to track and analyze greenhouse gas emissions globally and to inform policy decisions related to climate change mitigation.",
+          "error": null,
+          "response_time_ms": 4260.75,
+          "timestamp": "2025-11-02T15:42:37.137853",
+          "has_tool_call": true,
+          "has_answer": true
+        },
+        "llama_q5km": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"waste-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"Japan\",\"year\":2022}}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n{\n  \"rows\": [\n    {\n      \"country_name\": \"Japan\",\n      \"year\": 2022,\n      \"emissions_tonnes\": 2933328.6096820235\n    }\n  ],\n  \"row_count\": 1,\n  \"meta\": {\n    \"units\": [\n      \"tonnes CO2\"\n    ],\n    \"source\": \"EDGAR v2024\",\n    \"table_id\": \"waste-country-year\",\n    \"spatial_resolution\": null,\n    \"temporal_resolution\": null,\n    \"etag\": \"6b66495a130c2b63\",\n    \"query_patterns\": {\n      \"is_top_n\": false,\n      \"is_comparison\": false,\n      \"is_trend\": true,\n     ",
+          "answer": "Japan's waste sector emissions in 2022 were approximately 2.93 MtCO\u2082 (or 2,933,328 tonnes CO2). \n\nSource: Source: waste-country-year, EDGAR v2024.\n\nNote: Only one value is present in the data for Japan in 2022.",
+          "error": null,
+          "response_time_ms": 12122.24,
+          "timestamp": "2025-11-02T15:42:50.270738",
+          "has_tool_call": true,
+          "has_answer": true
+        }
+      }
+    },
+    {
+      "question_id": 17,
+      "question": "Compare waste emissions between New York City and Los Angeles in 2022.",
+      "category": "comparative",
+      "sector": "waste",
+      "level": "city",
+      "grain": "year",
+      "difficulty": "medium",
+      "llm_results": {
+        "default": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"waste-city-year\",\"select\":[\"city_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"city_name\":\"New York City\",\"year\":2022}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"waste-city-year\",\"select\":[\"city_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"city_name\":\"Los Angeles\",\"year\":2022}}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n{\n  \"error\": \"Model did not return valid JSON tool call.\",\n  \"raw\": \"{\\\"tool\\\":\\\"query\\\",\\\"args\\\":{\\\"file_id\\\":\\\"waste-city-year\\\",\\\"select\\\":[\\\"city_name\\\",\\\"year\\\",\\\"emissions_tonnes\\\"],\\\"where\\\":{\\\"city_name\\\":\\\"New York City\\\",\\\"year\\\":2022}}},{\\\"tool\\\":\\\"query\\\",\\\"args\\\":{\\\"file_id\\\":\\\"waste-city-year\\\",\\\"select\\\":[\\\"city_name\\\",\\\"year\\\",\\\"emissions_tonnes\\\"],\\\"where\\\":{\\\"city_name\\\":\\\"Los Angeles\\\",\\\"year\\\":2022}}}\"\n}",
+          "answer": "Unable to retrieve data: Model did not return valid JSON tool call.. Please check the query parameters or use /get_schema to verify column names.",
+          "error": null,
+          "response_time_ms": 2220.37,
+          "timestamp": "2025-11-02T15:42:53.498153",
+          "has_tool_call": true,
+          "has_answer": true
+        },
+        "llama_q5km": {
+          "success": true,
+          "tool_call": "[{\"tool\":\"query\",\"args\":{\"file_id\":\"waste-city-year\",\"select\":[\"city_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"city_name\":\"New York City\",\"year\":2022}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"waste-city-year\",\"select\":[\"city_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"city_name\":\"Los Angeles\",\"year\":2022}}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n{\n  \"error\": \"Model did not return valid JSON tool call.\",\n  \"raw\": \"[{\\\"tool\\\":\\\"query\\\",\\\"args\\\":{\\\"file_id\\\":\\\"waste-city-year\\\",\\\"select\\\":[\\\"city_name\\\",\\\"year\\\",\\\"emissions_tonnes\\\"],\\\"where\\\":{\\\"city_name\\\":\\\"New York City\\\",\\\"year\\\":2022}}},{\\\"tool\\\":\\\"query\\\",\\\"args\\\":{\\\"file_id\\\":\\\"waste-city-year\\\",\\\"select\\\":[\\\"city_name\\\",\\\"year\\\",\\\"emissions_tonnes\\\"],\\\"where\\\":{\\\"city_name\\\":\\\"Los Angeles\\\",\\\"year\\\":2022}}}\"\n}",
+          "answer": "Unable to retrieve data: Model did not return valid JSON tool call.. Please check the query parameters or use /get_schema to verify column names.",
+          "error": null,
+          "response_time_ms": 9911.88,
+          "timestamp": "2025-11-02T15:43:04.414558",
+          "has_tool_call": true,
+          "has_answer": true
+        }
+      }
+    },
+    {
+      "question_id": 23,
+      "question": "Rank the top 5 countries by agricultural emissions in 2022.",
+      "category": "comparative",
+      "sector": "agriculture",
+      "level": "country",
+      "grain": "year",
+      "difficulty": "hard",
+      "llm_results": {
+        "default": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"agriculture-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"year\":2022},\"order_by\":\"emissions_tonnes DESC\",\"limit\":5}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n{\n  \"rows\": [\n    {\n      \"country_name\": \"India\",\n      \"year\": 2022,\n      \"emissions_tonnes\": 30600042.057999343\n    },\n    {\n      \"country_name\": \"China\",\n      \"year\": 2022,\n      \"emissions_tonnes\": 16279826.616335304\n    },\n    {\n      \"country_name\": \"Brazil\",\n      \"year\": 2022,\n      \"emissions_tonnes\": 12949001.534368211\n    },\n    {\n      \"country_name\": \"Russia\",\n      \"year\": 2022,\n      \"emissions_tonnes\": 8126398.320384501\n    },\n    {\n      \"countr",
+          "answer": "The top 5 countries with the highest agricultural emissions in 2022 are India, China, Brazil, Russia, and the United States of America. India had the highest emissions with 30.60 MtCO\u2082, followed by China with 16.28 MtCO\u2082, Brazil with 12.95 MtCO\u2082, Russia with 8.13 MtCO\u2082, and the United States of America with 6.88 MtCO\u2082.",
+          "error": null,
+          "response_time_ms": 3951.51,
+          "timestamp": "2025-11-02T15:43:09.370841",
+          "has_tool_call": true,
+          "has_answer": true
+        },
+        "llama_q5km": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"agriculture-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"year\":2022},\"order_by\":\"emissions_tonnes DESC\",\"limit\":5}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n{\n  \"rows\": [\n    {\n      \"country_name\": \"India\",\n      \"year\": 2022,\n      \"emissions_tonnes\": 30600042.057999343\n    },\n    {\n      \"country_name\": \"China\",\n      \"year\": 2022,\n      \"emissions_tonnes\": 16279826.616335304\n    },\n    {\n      \"country_name\": \"Brazil\",\n      \"year\": 2022,\n      \"emissions_tonnes\": 12949001.534368211\n    },\n    {\n      \"country_name\": \"Russia\",\n      \"year\": 2022,\n      \"emissions_tonnes\": 8126398.320384501\n    },\n    {\n      \"countr",
+          "answer": "The top 5 countries by agricultural emissions in 2022 are:\n\n1. India with 30.6 MtCO\u2082\n2. China with 16.28 MtCO\u2082 (China has approximately 49% of India's emissions)\n3. Brazil with 12.95 MtCO\u2082 (Brazil has approximately 42% of India's emissions)\n4. Russia with 8.13 MtCO\u2082 (Russia has approximately 26% of India's emissions)\n5. United States of America with 6.88 MtCO\u2082 (United States has approximately 22% of India's emissions)\n\nSource: agriculture-country-year, EDGAR v2024",
+          "error": null,
+          "response_time_ms": 11914.18,
+          "timestamp": "2025-11-02T15:43:22.291895",
+          "has_tool_call": true,
+          "has_answer": true
+        }
+      }
+    },
+    {
+      "question_id": 48,
+      "question": "What are the total emissions from all sectors for Germany in 2023?",
+      "category": "complex",
+      "sector": "multiple",
+      "level": "country",
+      "grain": "year",
+      "difficulty": "hard",
+      "llm_results": {
+        "default": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"power-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"waste-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"agriculture-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"buildings-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"fuel-exploitation-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"industrial-combustion-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"industrial-processes-country-year\",\"select\":[\"country_name\",\"year\",\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n{\n  \"error\": \"Model did not return valid JSON tool call.\",\n  \"raw\": \"{\\\"tool\\\":\\\"query\\\",\\\"args\\\":{\\\"file_id\\\":\\\"transport-country-year\\\",\\\"select\\\":[\\\"country_name\\\",\\\"year\\\",\\\"emissions_tonnes\\\"],\\\"where\\\":{\\\"country_name\\\":\\\"Germany\\\",\\\"year\\\":2023}}},{\\\"tool\\\":\\\"query\\\",\\\"args\\\":{\\\"file_id\\\":\\\"power-country-year\\\",\\\"select\\\":[\\\"country_name\\\",\\\"year\\\",\\\"emissions_tonnes\\\"],\\\"where\\\":{\\\"country_name\\\":\\\"Germany\\\",\\\"year\\\":2023}}},{\\\"tool\\\":\\\"query\\\",\\\"args\\\":{\\\"f",
+          "answer": "Unable to retrieve data: Model did not return valid JSON tool call.. Please check the query parameters or use /get_schema to verify column names.",
+          "error": null,
+          "response_time_ms": 6669.46,
+          "timestamp": "2025-11-02T15:43:29.972713",
+          "has_tool_call": true,
+          "has_answer": true
+        },
+        "llama_q5km": {
+          "success": true,
+          "tool_call": "[{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-country-year\",\"select\":[\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"power-country-year\",\"select\":[\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"waste-country-year\",\"select\":[\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"agriculture-country-year\",\"select\":[\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"buildings-country-year\",\"select\":[\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"fuel-exploitation-country-year\",\"select\":[\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"industrial-combustion-country-year\",\"select\":[\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"industrial-processes-country-year\",\"select\":[\"emissions_tonnes\"],\"where\":{\"country_name\":\"Germany\",\"year\":2023}}} ]",
+          "tool_result_preview": "(first 10 rows per query) ---\n\n--- Result 1/8 ---\n{\n  \"rows\": [\n    {\n      \"emissions_tonnes\": 164426928.0\n    }\n  ],\n  \"row_count\": 1,\n  \"meta\": {\n    \"units\": [\n      \"tonnes CO2\"\n    ],\n    \"source\": \"EDGAR v2024\",\n    \"table_id\": \"transport-country-year\",\n    \"spatial_resolution\": null,\n    \"temporal_resolution\": null,\n    \"etag\": \"d57c264b67f0631c\",\n    \"query_patterns\": {\n      \"is_top_n\": false,\n      \"is_comparison\": false,\n      \"is_trend\": true,\n      \"has_temporal_filter\": true,\n    ",
+          "answer": "Unable to retrieve some data: File 'industrial-combustion-country-year' not found in manifest; File 'industrial-processes-country-year' not found in manifest. Please check the query parameters.",
+          "error": null,
+          "response_time_ms": 20023.11,
+          "timestamp": "2025-11-02T15:43:51.006843",
+          "has_tool_call": true,
+          "has_answer": true
+        }
+      }
+    },
+    {
+      "question_id": 50,
+      "question": "Compare monthly power and transport emissions for California in 2023 and tell me which sector was higher on average.",
+      "category": "complex",
+      "sector": "multiple",
+      "level": "admin1",
+      "grain": "month",
+      "difficulty": "hard",
+      "llm_results": {
+        "default": {
+          "success": true,
+          "tool_call": "{\"tool\":\"query\",\"args\":{\"file_id\":\"power-admin1-month\",\"select\":[\"admin1_name\",\"year\",\"month\",\"emissions_tonnes\"],\"where\":{\"admin1_name\":\"California\",\"year\":2023}}},{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-admin1-month\",\"select\":[\"admin1_name\",\"year\",\"month\",\"emissions_tonnes\"],\"where\":{\"admin1_name\":\"California\",\"year\":2023}}}",
+          "tool_result_preview": "(first 10 rows per query) ---\n{\n  \"error\": \"Model did not return valid JSON tool call.\",\n  \"raw\": \"{\\\"tool\\\":\\\"query\\\",\\\"args\\\":{\\\"file_id\\\":\\\"power-admin1-month\\\",\\\"select\\\":[\\\"admin1_name\\\",\\\"year\\\",\\\"month\\\",\\\"emissions_tonnes\\\"],\\\"where\\\":{\\\"admin1_name\\\":\\\"California\\\",\\\"year\\\":2023}}},{\\\"tool\\\":\\\"query\\\",\\\"args\\\":{\\\"file_id\\\":\\\"transport-admin1-month\\\",\\\"select\\\":[\\\"admin1_name\\\",\\\"year\\\",\\\"month\\\",\\\"emissions_tonnes\\\"],\\\"where\\\":{\\\"admin1_name\\\":\\\"California\\\",\\\"year\\\":2023}}}\"\n}",
+          "answer": "Unable to retrieve data: Model did not return valid JSON tool call.. Please check the query parameters or use /get_schema to verify column names.",
+          "error": null,
+          "response_time_ms": 2303.63,
+          "timestamp": "2025-11-02T15:43:54.321744",
+          "has_tool_call": true,
+          "has_answer": true
+        },
+        "llama_q5km": {
+          "success": true,
+          "tool_call": "[{\"tool\":\"query\",\"args\":{\"file_id\":\"power-admin1-month\",\"select\":[\"sector\",\"year\",\"month\",\"emissions_tonnes\"],\"where\":{\"admin1_name\":\"California\",\"year\":2023},\"order_by\":\"emissions_tonnes DESC\"}},{\"tool\":\"query\",\"args\":{\"file_id\":\"transport-admin1-month\",\"select\":[\"sector\",\"year\",\"month\",\"emissions_tonnes\"],\"where\":{\"admin1_name\":\"California\",\"year\":2023},\"order_by\":\"emissions_tonnes DESC\"}}]",
+          "tool_result_preview": "(first 10 rows per query) ---\n\n--- Result 1/2 ---\n{\n  \"error\": \"invalid_columns\",\n  \"detail\": \"Invalid columns in select: ['sector']\",\n  \"timestamp\": \"2025-11-02T20:44:01.233005Z\",\n  \"hint\": \"Check available columns via /get_schema endpoint\",\n  \"context\": {\n    \"bad_select\": [\n      \"sector\"\n    ],\n    \"bad_group_by\": [],\n    \"bad_order_by\": [],\n    \"available_columns\": [\n      \"country_name\",\n      \"emissions_tonnes\",\n      \"iso3\",\n      \"month\",\n      \"sector\",\n      \"year\",\n      \"year\"\n    ]",
+          "answer": "Unable to retrieve some data: Invalid columns in select: ['sector']; Invalid columns in select: ['sector']. Please check the query parameters.",
+          "error": null,
+          "response_time_ms": 5920.25,
+          "timestamp": "2025-11-02T15:44:01.253040",
+          "has_tool_call": true,
+          "has_answer": true
+        }
+      }
+    }
+  ]
+}

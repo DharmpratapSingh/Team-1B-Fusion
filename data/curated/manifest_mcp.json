@@ -1,0 +1,386 @@
+{
+  "server": {
+    "name": "ClimateGPT EDGAR Transport Server",
+    "dataset": "EDGAR transport (v2024) — curated for ClimateGPT",
+    "version": "2024.1",
+    "source": "EDGAR v2024 transport",
+    "license": "CC-BY 4.0 (EDGAR terms apply)",
+    "units": "tonnes CO2",
+    "spatial_res": "0.1°",
+    "temporal_res": "monthly, annual",
+    "capabilities": {
+      "tools": [
+        {
+          "name": "list_files",
+          "description": "Enumerate available tables with basic descriptors",
+          "args_schema": {}
+        },
+        {
+          "name": "get_schema",
+          "description": "Return schema & metadata for a given file id",
+          "args_schema": { "file_id": "string" }
+        },
+        {
+          "name": "query",
+          "description": "Filter/aggregate a file by common dimensions",
+          "args_schema": {
+            "file_id": "string",
+            "select": "string[]",
+            "where": "object",
+            "group_by": "string[]",
+            "order_by": "string",
+            "limit": "integer"
+          }
+        },
+        {
+          "name": "metrics.yoy",
+          "description": "Year-over-year delta helper (e.g., biggest 2020 drop vs 2019)",
+          "args_schema": {
+            "file_id": "string",
+            "where": "object",
+            "key_col": "string",
+            "value_col": "string",
+            "base_year": "integer",
+            "compare_year": "integer",
+            "top_n": "integer",
+            "direction": "string"
+          }
+        }
+      ]
+    }
+  },
+  "files": [
+    {
+      "id": "city-year",
+      "title": "City transport CO₂ totals (yearly)",
+      "description": "City totals from EDGAR 0.1° grid aggregated by UCDB urban centre polygons (strict). Annual sums.",
+      "level": "city",
+      "period": "year",
+      "path": "data/curated/city-year/transport_city_year.csv",
+      "file_format": "csv",
+      "exists": true,
+      "priority": 1,
+      "columns": [
+        {"name":"city_id","type":"string","role":"key"},
+        {"name":"city_name","type":"string","role":"label"},
+        {"name":"admin1_name","type":"string","role":"label"},
+        {"name":"country_name","type":"string","role":"label"},
+        {"name":"iso3","type":"string","role":"code"},
+        {"name":"year","type":"int16","role":"time"},
+        {"name":"emissions_tonnes","type":"float64","role":"measure","units":"tonnes CO2"},
+        {"name":"MtCO2","type":"float64","role":"measure","units":"Mt CO2"}
+      ],
+      "primary_keys": ["year","city_id"],
+      "temporal_extent": {"start": 2000, "end": 2023, "grain": "year"},
+      "spatial_extent": {"type":"global"},
+      "row_count": 257327,
+      "semantics": {
+        "units": ["tonnes CO2","Mt CO2"],
+        "spatial_res": "0.1°",
+        "temporal_res": "annual"
+      },
+      "quality": {
+        "coverage_ratio_vs_global": {"mean": 0.045, "min": 0.040, "max": 0.048},
+        "cities_count": 10723
+      },
+      "provenance": {
+        "generated_from": "EDGAR v2024 transport gridded 0.1°",
+        "city_mapping": "UCDB polygons (strict) + nearest-centroid fallback"
+      },
+      "query_capabilities": {
+        "filterable": ["year","iso3","country_name","admin1_name","city_name","city_id"],
+        "groupable": ["year","iso3","country_name","admin1_name"],
+        "sortable": ["emissions_tonnes","MtCO2","year","city_name"]
+      },
+      "example_queries": [
+        {
+          "natural": "Top 10 cities globally by transport CO₂ in 2019",
+          "args": {
+            "file_id": "city-year",
+            "select": ["city_name","country_name","year","emissions_tonnes"],
+            "where": {"year": 2019},
+            "order_by": "emissions_tonnes DESC",
+            "limit": 10
+          }
+        },
+        {
+          "natural": "Yearly trend for New York City",
+          "args": {
+            "file_id":"city-year",
+            "select":["year","emissions_tonnes","MtCO2"],
+            "where":{"city_name":"New York City"},
+            "order_by":"year ASC"
+          }
+        }
+      ],
+      "best_for": [
+        "City ranking comparisons by year",
+        "Single-city time series (2000–2023)"
+      ],
+      "avoid_if": [
+        "You need monthly seasonality (use city-month)",
+        "You want maximal city coverage (use city-year-expanded)"
+      ]
+    },
+    {
+      "id": "admin1-year",
+      "title": "State/Province transport CO₂ totals (yearly)",
+      "description": "Admin-1 totals from EDGAR 0.1° grid via intersects/nearest fallback, with country mapping.",
+      "level": "admin1",
+      "period": "year",
+      "path": "data/curated/admin1-year/transport_admin1_year.csv",
+      "file_format": "csv",
+      "exists": true,
+      "priority": 1,
+      "columns": [
+        {"name":"admin1_geoid","type":"string","role":"key"},
+        {"name":"admin1_name","type":"string","role":"label"},
+        {"name":"country_name","type":"string","role":"label"},
+        {"name":"iso3","type":"string","role":"code"},
+        {"name":"year","type":"int16","role":"time"},
+        {"name":"emissions_tonnes","type":"float64","role":"measure","units":"tonnes CO2"},
+        {"name":"MtCO2","type":"float64","role":"measure","units":"Mt CO2"}
+      ],
+      "primary_keys": ["year","admin1_geoid"],
+      "temporal_extent": {"start": 2000, "end": 2023, "grain": "year"},
+      "spatial_extent": {"type":"global"},
+      "row_count": 104448,
+      "semantics": {
+        "units": ["tonnes CO2","Mt CO2"],
+        "spatial_res": "0.1°",
+        "temporal_res": "annual"
+      },
+      "quality": {
+        "coverage_ratio_vs_global": {"mean": 0.975, "min": 0.973, "max": 0.977}
+      },
+      "provenance": {
+        "join_strategy": "Admin-1 intersects, nearest fallback up to 250km"
+      },
+      "query_capabilities": {
+        "filterable": ["year","iso3","country_name","admin1_name","admin1_geoid"],
+        "groupable": ["year","iso3","country_name"],
+        "sortable": ["emissions_tonnes","MtCO2","year","admin1_name"]
+      },
+      "example_queries": [
+        {
+          "natural": "Which US state had the largest drop in 2020 vs 2019?",
+          "args": {
+            "file_id":"admin1-year",
+            "select":["admin1_name","year","emissions_tonnes"],
+            "where":{"iso3":"USA","year":{"in":[2019,2020]}},
+            "group_by":["admin1_name","year"],
+            "order_by":"admin1_name ASC",
+            "limit":1000
+          }
+        }
+      ],
+      "best_for": ["Country-wide state rankings per year","Policy comparisons across states/provinces"],
+      "avoid_if": ["You need monthly dynamics (use admin1-month)"]
+    },
+    {
+      "id": "country-year",
+      "title": "Country transport CO₂ totals (yearly)",
+      "description": "Country totals from EDGAR 0.1° grid aggregated to ISO3 countries.",
+      "level": "country",
+      "period": "year",
+      "path": "data/curated/country-year/transport_country_year.csv",
+      "file_format": "csv",
+      "exists": true,
+      "priority": 1,
+      "columns": [
+        {"name":"iso3","type":"string","role":"key"},
+        {"name":"country_name","type":"string","role":"label"},
+        {"name":"year","type":"int16","role":"time"},
+        {"name":"emissions_tonnes","type":"float64","role":"measure","units":"tonnes CO2"},
+        {"name":"MtCO2","type":"float64","role":"measure","units":"Mt CO2"}
+      ],
+      "primary_keys": ["year","iso3"],
+      "temporal_extent": {"start": 2000, "end": 2023, "grain": "year"},
+      "spatial_extent": {"type":"global"},
+      "semantics": { "units": ["tonnes CO2","Mt CO2"], "spatial_res": "0.1°", "temporal_res": "annual" },
+      "quality": { "coverage_ratio_vs_global": {"mean": 0.862} },
+      "query_capabilities": {
+        "filterable": ["year","iso3","country_name"],
+        "groupable": ["year","iso3"],
+        "sortable": ["emissions_tonnes","MtCO2","year","country_name"]
+      },
+      "example_queries": [
+        {
+          "natural": "Transport CO₂ trend for Germany (2000–2023)",
+          "args": {
+            "file_id":"country-year",
+            "select":["year","emissions_tonnes","MtCO2","iso3"],
+            "where":{"iso3":"DEU"},
+            "order_by":"year ASC"
+          }
+        }
+      ]
+    },
+    {
+      "id": "year-all-levels",
+      "title": "All levels (city/admin1/country) — yearly unified",
+      "description": "Unified year-level table for cross-level ranking queries.",
+      "level": "mixed",
+      "period": "year",
+      "path": "data/curated/year_all_levels.csv",
+      "file_format": "csv",
+      "exists": true,
+      "priority": 2,
+      "columns": [
+        {"name":"level","type":"string","role":"code"},
+        {"name":"entity_id","type":"string","role":"key"},
+        {"name":"entity_name","type":"string","role":"label"},
+        {"name":"iso3","type":"string","role":"code"},
+        {"name":"year","type":"int16","role":"time"},
+        {"name":"emissions_tonnes","type":"float64","role":"measure","units":"tonnes CO2"},
+        {"name":"MtCO2","type":"float64","role":"measure","units":"Mt CO2"}
+      ],
+      "primary_keys": ["year","level","entity_id"],
+      "temporal_extent": {"start": 2000, "end": 2023, "grain": "year"},
+      "semantics": { "units": ["tonnes CO2","Mt CO2"], "spatial_res": "0.1°", "temporal_res": "annual" },
+      "best_for": ["Mixed-level 'top emitter' questions"],
+      "avoid_if": ["You need strict per-level schemas or monthly data (use the specific level tables)."]
+    },
+    {
+      "id": "city-month",
+      "title": "City transport CO₂ totals (monthly)",
+      "description": "City totals (monthly) from EDGAR 0.1° grid aggregated by UCDB polygons (strict).",
+      "level": "city",
+      "period": "month",
+      "path": "data/curated/city-month/transport_city_month.csv",
+      "file_format": "csv",
+      "exists": true,
+      "priority": 1,
+      "columns": [
+        {"name":"city_id","type":"string","role":"key"},
+        {"name":"city_name","type":"string","role":"label"},
+        {"name":"admin1_name","type":"string","role":"label"},
+        {"name":"country_name","type":"string","role":"label"},
+        {"name":"iso3","type":"string","role":"code"},
+        {"name":"year","type":"int16","role":"time"},
+        {"name":"month","type":"int8","role":"time"},
+        {"name":"emissions_tonnes","type":"float64","role":"measure","units":"tonnes CO2"},
+        {"name":"MtCO2","type":"float64","role":"measure","units":"Mt CO2"}
+      ],
+      "primary_keys": ["year","month","city_id"],
+      "temporal_extent": {"start": 2000, "end": 2023, "grain": "month"},
+      "semantics": { "units": ["tonnes CO2","Mt CO2"], "spatial_res": "0.1°", "temporal_res": "monthly" },
+      "query_capabilities": {
+        "filterable": ["year","month","iso3","country_name","admin1_name","city_name","city_id"],
+        "groupable": ["year","month","iso3","country_name","admin1_name"],
+        "sortable": ["emissions_tonnes","MtCO2","year","month","city_name"]
+      }
+    },
+    {
+      "id": "admin1-month",
+      "title": "State/Province transport CO₂ totals (monthly)",
+      "description": "Admin-1 totals (monthly) from EDGAR 0.1° grid via intersects/nearest fallback.",
+      "level": "admin1",
+      "period": "month",
+      "path": "data/curated/admin1-month/transport_admin1_month.csv",
+      "file_format": "csv",
+      "exists": true,
+      "priority": 1,
+      "columns": [
+        {"name":"admin1_geoid","type":"string","role":"key"},
+        {"name":"admin1_name","type":"string","role":"label"},
+        {"name":"country_name","type":"string","role":"label"},
+        {"name":"iso3","type":"string","role":"code"},
+        {"name":"year","type":"int16","role":"time"},
+        {"name":"month","type":"int8","role":"time"},
+        {"name":"emissions_tonnes","type":"float64","role":"measure","units":"tonnes CO2"},
+        {"name":"MtCO2","type":"float64","role":"measure","units":"Mt CO2"}
+      ],
+      "primary_keys": ["year","month","admin1_geoid"],
+      "temporal_extent": {"start": 2000, "end": 2023, "grain": "month"},
+      "semantics": { "units": ["tonnes CO2","Mt CO2"], "spatial_res": "0.1°", "temporal_res": "monthly" },
+      "query_capabilities": {
+        "filterable": ["year","month","iso3","country_name","admin1_name","admin1_geoid"],
+        "groupable": ["year","month","iso3","country_name"],
+        "sortable": ["emissions_tonnes","MtCO2","year","month","admin1_name"]
+      }
+    },
+    {
+      "id": "country-month",
+      "title": "Country transport CO₂ totals (monthly)",
+      "description": "Country totals (monthly) from EDGAR 0.1° grid aggregated to ISO3 countries.",
+      "level": "country",
+      "period": "month",
+      "path": "data/curated/country-month/transport_country_month.csv",
+      "file_format": "csv",
+      "exists": true,
+      "priority": 1,
+      "columns": [
+        {"name":"iso3","type":"string","role":"key"},
+        {"name":"country_name","type":"string","role":"label"},
+        {"name":"year","type":"int16","role":"time"},
+        {"name":"month","type":"int8","role":"time"},
+        {"name":"emissions_tonnes","type":"float64","role":"measure","units":"tonnes CO2"},
+        {"name":"MtCO2","type":"float64","role":"measure","units":"Mt CO2"}
+      ],
+      "primary_keys": ["year","month","iso3"],
+      "temporal_extent": {"start": 2000, "end": 2023, "grain": "month"},
+      "semantics": { "units": ["tonnes CO2","Mt CO2"], "spatial_res": "0.1°", "temporal_res": "monthly" },
+      "query_capabilities": {
+        "filterable": ["year","month","iso3","country_name"],
+        "groupable": ["year","month","iso3"],
+        "sortable": ["emissions_tonnes","MtCO2","year","month","country_name"]
+      }
+    },
+    {
+      "id": "city-year-expanded",
+      "title": "City transport CO₂ totals (yearly, expanded coverage)",
+      "description": "Expanded city mapping with looser matching for higher coverage. Use when the user requests maximum city coverage or mentions small towns/edge cells.",
+      "level": "city_expanded",
+      "period": "year",
+      "path": "data/csv_datasets/transport_city_year_expanded.csv",
+      "file_format": "csv",
+      "exists": true,
+      "priority": 2,
+      "columns": [
+        {"name":"city_id","type":"string","role":"key"},
+        {"name":"city_name","type":"string","role":"label"},
+        {"name":"admin1_name","type":"string","role":"label"},
+        {"name":"country_name","type":"string","role":"label"},
+        {"name":"iso3","type":"string","role":"code"},
+        {"name":"year","type":"int16","role":"time"},
+        {"name":"emissions_tonnes","type":"float64","role":"measure","units":"tonnes CO2"},
+        {"name":"MtCO2","type":"float64","role":"measure","units":"Mt CO2"}
+      ],
+      "primary_keys": ["year","city_id"],
+      "temporal_extent": {"start": 2000, "end": 2023, "grain": "year"},
+      "semantics": { "units": ["tonnes CO2","Mt CO2"], "spatial_res": "0.1°", "temporal_res": "annual" },
+      "provenance": {
+        "notes": "Wider buffer + looser nearest + ISO-bounded Voronoi fill compared to strict city mapping."
+      },
+      "routing_hints": {
+        "prefer_when": ["user asks for maximum coverage", "small towns / edge cells are mentioned"]
+      }
+    },
+    {
+      "id": "city-month-expanded",
+      "title": "City transport CO₂ totals (monthly, expanded coverage)",
+      "description": "Expanded city mapping (monthly). Use when maximum city coverage is required.",
+      "level": "city_expanded",
+      "period": "month",
+      "path": "data/csv_datasets/transport_city_month_expanded.csv",
+      "file_format": "csv",
+      "exists": true,
+      "priority": 2,
+      "columns": [
+        {"name":"city_id","type":"string","role":"key"},
+        {"name":"city_name","type":"string","role":"label"},
+        {"name":"admin1_name","type":"string","role":"label"},
+        {"name":"country_name","type":"string","role":"label"},
+        {"name":"iso3","type":"string","role":"code"},
+        {"name":"year","type":"int16","role":"time"},
+        {"name":"month","type":"int8","role":"time"},
+        {"name":"emissions_tonnes","type":"float64","role":"measure","units":"tonnes CO2"},
+        {"name":"MtCO2","type":"float64","role":"measure","units":"Mt CO2"}
+      ],
+      "primary_keys": ["year","month","city_id"],
+      "temporal_extent": {"start": 2000, "end": 2023, "grain": "month"},
+      "semantics": { "units": ["tonnes CO2","Mt CO2"], "spatial_res": "0.1°", "temporal_res": "monthly" }
+    }
+  ]
+}

@@ -1,0 +1,3072 @@
+{
+  "name": "ClimateGPT Multi-Sector Emissions Data",
+  "description": "Comprehensive emissions data for all 8 major industry sectors: transport, power, agriculture, buildings, fuel exploitation, industrial combustion, industrial processes, and waste",
+  "version": "2.0.0",
+  "engine": "duckdb",
+  "files": [
+    {
+      "file_id": "agriculture-admin1-month",
+      "name": "Agriculture Emissions by Admin1 (Monthly)",
+      "description": "Monthly agriculture CO\u2082 emissions by admin1 from 2000-2023",
+      "source": "EDGAR v2024 agriculture",
+      "units": "tonnes CO\u2082",
+      "resolution": "admin1",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#agriculture_admin1_month",
+      "columns": [
+        {
+          "name": "admin1_geoid",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 GeoID"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "agriculture-admin1-year",
+      "name": "Agriculture Emissions by Admin1 (Annual)",
+      "description": "Annual agriculture CO\u2082 emissions by administrative level 1 from 2000-2024",
+      "source": "EDGAR v2024 agriculture",
+      "units": "tonnes CO\u2082",
+      "resolution": "admin1",
+      "temporal_coverage": "2000-2024",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#agriculture_admin1_year",
+      "columns": [
+        {
+          "name": "admin1_geoid",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 GeoID"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "agriculture-city-month",
+      "name": "Agriculture Emissions by City (Monthly)",
+      "description": "Monthly agriculture CO\u2082 emissions by city from 2000-2023",
+      "source": "EDGAR v2024 agriculture",
+      "units": "tonnes CO\u2082",
+      "resolution": "city",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#agriculture_city_month",
+      "columns": [
+        {
+          "name": "city_id",
+          "type": "VARCHAR",
+          "description": "City ID"
+        },
+        {
+          "name": "city_name",
+          "type": "VARCHAR",
+          "description": "City name"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "agriculture-city-year",
+      "name": "Agriculture Emissions by City (Annual)",
+      "description": "Annual agriculture CO\u2082 emissions by city from 2000-2024",
+      "source": "EDGAR v2024 agriculture",
+      "units": "tonnes CO\u2082",
+      "resolution": "city",
+      "temporal_coverage": "2000-2024",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#agriculture_city_year",
+      "columns": [
+        {
+          "name": "city_id",
+          "type": "VARCHAR",
+          "description": "City ID"
+        },
+        {
+          "name": "city_name",
+          "type": "VARCHAR",
+          "description": "City name"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "agriculture-country-month",
+      "name": "Agriculture Emissions by Country (Monthly)",
+      "description": "Monthly agriculture CO\u2082 emissions by country from 2000-2023",
+      "source": "EDGAR v2024 agriculture",
+      "units": "tonnes CO\u2082",
+      "resolution": "country",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#agriculture_country_month",
+      "columns": [
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "agriculture-country-year",
+      "name": "Agriculture Emissions by Country (Annual)",
+      "description": "Annual agriculture CO\u2082 emissions by country from 2000-2024",
+      "source": "EDGAR v2024 agriculture",
+      "units": "tonnes CO\u2082",
+      "resolution": "country",
+      "temporal_coverage": "2000-2024",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#agriculture_country_year",
+      "columns": [
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "buildings-admin1-month",
+      "name": "Buildings Emissions by Admin1 (Monthly)",
+      "description": "Monthly buildings CO\u2082 emissions by admin1 from 2000-2023",
+      "source": "EDGAR v2024 buildings",
+      "units": "tonnes CO\u2082",
+      "resolution": "admin1",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#buildings_admin1_month",
+      "columns": [
+        {
+          "name": "admin1_geoid",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 GeoID"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "buildings-admin1-year",
+      "name": "Buildings Emissions by Admin1 (Annual)",
+      "description": "Annual buildings CO\u2082 emissions by administrative level 1 from 2000-2024",
+      "source": "EDGAR v2024 buildings",
+      "units": "tonnes CO\u2082",
+      "resolution": "admin1",
+      "temporal_coverage": "2000-2024",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#buildings_admin1_year",
+      "columns": [
+        {
+          "name": "admin1_geoid",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 GeoID"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "buildings-city-month",
+      "name": "Buildings Emissions by City (Monthly)",
+      "description": "Monthly buildings CO\u2082 emissions by city from 2000-2023",
+      "source": "EDGAR v2024 buildings",
+      "units": "tonnes CO\u2082",
+      "resolution": "city",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#buildings_city_month",
+      "columns": [
+        {
+          "name": "city_id",
+          "type": "VARCHAR",
+          "description": "City ID"
+        },
+        {
+          "name": "city_name",
+          "type": "VARCHAR",
+          "description": "City name"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "buildings-city-year",
+      "name": "Buildings Emissions by City (Annual)",
+      "description": "Annual buildings CO\u2082 emissions by city from 2000-2024",
+      "source": "EDGAR v2024 buildings",
+      "units": "tonnes CO\u2082",
+      "resolution": "city",
+      "temporal_coverage": "2000-2024",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#buildings_city_year",
+      "columns": [
+        {
+          "name": "city_id",
+          "type": "VARCHAR",
+          "description": "City ID"
+        },
+        {
+          "name": "city_name",
+          "type": "VARCHAR",
+          "description": "City name"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "buildings-country-month",
+      "name": "Buildings Emissions by Country (Monthly)",
+      "description": "Monthly buildings CO\u2082 emissions by country from 2000-2023",
+      "source": "EDGAR v2024 buildings",
+      "units": "tonnes CO\u2082",
+      "resolution": "country",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#buildings_country_month",
+      "columns": [
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "buildings-country-year",
+      "name": "Buildings Emissions by Country (Annual)",
+      "description": "Annual buildings CO\u2082 emissions by country from 2000-2024",
+      "source": "EDGAR v2024 buildings",
+      "units": "tonnes CO\u2082",
+      "resolution": "country",
+      "temporal_coverage": "2000-2024",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#buildings_country_year",
+      "columns": [
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "fuel-exploitation-admin1-month",
+      "name": "Fuel Exploitation Emissions by Admin1 (Monthly)",
+      "description": "Monthly fuel exploitation CO\u2082 emissions by admin1 from 2000-2023",
+      "source": "EDGAR v2024 fuel exploitation",
+      "units": "tonnes CO\u2082",
+      "resolution": "admin1",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#fuel_exploitation_admin1_month",
+      "columns": [
+        {
+          "name": "admin1_geoid",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 GeoID"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "fuel-exploitation-admin1-year",
+      "name": "Fuel Exploitation Emissions by Admin1 (Annual)",
+      "description": "Annual fuel exploitation CO\u2082 emissions by administrative level 1 from 2000-2024",
+      "source": "EDGAR v2024 fuel exploitation",
+      "units": "tonnes CO\u2082",
+      "resolution": "admin1",
+      "temporal_coverage": "2000-2024",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#fuel_exploitation_admin1_year",
+      "columns": [
+        {
+          "name": "admin1_geoid",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 GeoID"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "fuel-exploitation-city-month",
+      "name": "Fuel Exploitation Emissions by City (Monthly)",
+      "description": "Monthly fuel exploitation CO\u2082 emissions by city from 2000-2023",
+      "source": "EDGAR v2024 fuel exploitation",
+      "units": "tonnes CO\u2082",
+      "resolution": "city",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#fuel_exploitation_city_month",
+      "columns": [
+        {
+          "name": "city_id",
+          "type": "VARCHAR",
+          "description": "City ID"
+        },
+        {
+          "name": "city_name",
+          "type": "VARCHAR",
+          "description": "City name"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "fuel-exploitation-city-year",
+      "name": "Fuel Exploitation Emissions by City (Annual)",
+      "description": "Annual fuel exploitation CO\u2082 emissions by city from 2000-2024",
+      "source": "EDGAR v2024 fuel exploitation",
+      "units": "tonnes CO\u2082",
+      "resolution": "city",
+      "temporal_coverage": "2000-2024",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#fuel_exploitation_city_year",
+      "columns": [
+        {
+          "name": "city_id",
+          "type": "VARCHAR",
+          "description": "City ID"
+        },
+        {
+          "name": "city_name",
+          "type": "VARCHAR",
+          "description": "City name"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "fuel-exploitation-country-month",
+      "name": "Fuel Exploitation Emissions by Country (Monthly)",
+      "description": "Monthly fuel exploitation CO\u2082 emissions by country from 2000-2023",
+      "source": "EDGAR v2024 fuel exploitation",
+      "units": "tonnes CO\u2082",
+      "resolution": "country",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#fuel_exploitation_country_month",
+      "columns": [
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "fuel-exploitation-country-year",
+      "name": "Fuel Exploitation Emissions by Country (Annual)",
+      "description": "Annual fuel exploitation CO\u2082 emissions by country from 2000-2024",
+      "source": "EDGAR v2024 fuel exploitation",
+      "units": "tonnes CO\u2082",
+      "resolution": "country",
+      "temporal_coverage": "2000-2024",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#fuel_exploitation_country_year",
+      "columns": [
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "ind-combustion-admin1-month",
+      "name": "Industrial Combustion Emissions by Admin1 (Monthly)",
+      "description": "Monthly industrial combustion CO\u2082 emissions by admin1 from 2000-2023",
+      "source": "EDGAR v2024 industrial combustion",
+      "units": "tonnes CO\u2082",
+      "resolution": "admin1",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#ind_combustion_admin1_month",
+      "columns": [
+        {
+          "name": "admin1_geoid",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 GeoID"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "ind-combustion-admin1-year",
+      "name": "Industrial Combustion Emissions by Admin1 (Annual)",
+      "description": "Annual industrial combustion CO\u2082 emissions by administrative level 1 from 2000-2024",
+      "source": "EDGAR v2024 industrial combustion",
+      "units": "tonnes CO\u2082",
+      "resolution": "admin1",
+      "temporal_coverage": "2000-2024",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#ind_combustion_admin1_year",
+      "columns": [
+        {
+          "name": "admin1_geoid",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 GeoID"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "ind-combustion-city-month",
+      "name": "Industrial Combustion Emissions by City (Monthly)",
+      "description": "Monthly industrial combustion CO\u2082 emissions by city from 2000-2023",
+      "source": "EDGAR v2024 industrial combustion",
+      "units": "tonnes CO\u2082",
+      "resolution": "city",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#ind_combustion_city_month",
+      "columns": [
+        {
+          "name": "city_id",
+          "type": "VARCHAR",
+          "description": "City ID"
+        },
+        {
+          "name": "city_name",
+          "type": "VARCHAR",
+          "description": "City name"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "ind-combustion-city-year",
+      "name": "Industrial Combustion Emissions by City (Annual)",
+      "description": "Annual industrial combustion CO\u2082 emissions by city from 2000-2024",
+      "source": "EDGAR v2024 industrial combustion",
+      "units": "tonnes CO\u2082",
+      "resolution": "city",
+      "temporal_coverage": "2000-2024",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#ind_combustion_city_year",
+      "columns": [
+        {
+          "name": "city_id",
+          "type": "VARCHAR",
+          "description": "City ID"
+        },
+        {
+          "name": "city_name",
+          "type": "VARCHAR",
+          "description": "City name"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "ind-combustion-country-month",
+      "name": "Industrial Combustion Emissions by Country (Monthly)",
+      "description": "Monthly industrial combustion CO\u2082 emissions by country from 2000-2023",
+      "source": "EDGAR v2024 industrial combustion",
+      "units": "tonnes CO\u2082",
+      "resolution": "country",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#ind_combustion_country_month",
+      "columns": [
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "ind-combustion-country-year",
+      "name": "Industrial Combustion Emissions by Country (Annual)",
+      "description": "Annual industrial combustion CO\u2082 emissions by country from 2000-2024",
+      "source": "EDGAR v2024 industrial combustion",
+      "units": "tonnes CO\u2082",
+      "resolution": "country",
+      "temporal_coverage": "2000-2024",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#ind_combustion_country_year",
+      "columns": [
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "ind-processes-admin1-month",
+      "name": "Industrial Processes Emissions by Admin1 (Monthly)",
+      "description": "Monthly industrial processes CO\u2082 emissions by admin1 from 2000-2023",
+      "source": "EDGAR v2024 industrial processes",
+      "units": "tonnes CO\u2082",
+      "resolution": "admin1",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#ind_processes_admin1_month",
+      "columns": [
+        {
+          "name": "admin1_geoid",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 GeoID"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "ind-processes-admin1-year",
+      "name": "Industrial Processes Emissions by Admin1 (Annual)",
+      "description": "Annual industrial processes CO\u2082 emissions by administrative level 1 from 2000-2024",
+      "source": "EDGAR v2024 industrial processes",
+      "units": "tonnes CO\u2082",
+      "resolution": "admin1",
+      "temporal_coverage": "2000-2024",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#ind_processes_admin1_year",
+      "columns": [
+        {
+          "name": "admin1_geoid",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 GeoID"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "ind-processes-city-month",
+      "name": "Industrial Processes Emissions by City (Monthly)",
+      "description": "Monthly industrial processes CO\u2082 emissions by city from 2000-2023",
+      "source": "EDGAR v2024 industrial processes",
+      "units": "tonnes CO\u2082",
+      "resolution": "city",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#ind_processes_city_month",
+      "columns": [
+        {
+          "name": "city_id",
+          "type": "VARCHAR",
+          "description": "City ID"
+        },
+        {
+          "name": "city_name",
+          "type": "VARCHAR",
+          "description": "City name"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "ind-processes-city-year",
+      "name": "Industrial Processes Emissions by City (Annual)",
+      "description": "Annual industrial processes CO\u2082 emissions by city from 2000-2024",
+      "source": "EDGAR v2024 industrial processes",
+      "units": "tonnes CO\u2082",
+      "resolution": "city",
+      "temporal_coverage": "2000-2024",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#ind_processes_city_year",
+      "columns": [
+        {
+          "name": "city_id",
+          "type": "VARCHAR",
+          "description": "City ID"
+        },
+        {
+          "name": "city_name",
+          "type": "VARCHAR",
+          "description": "City name"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "ind-processes-country-month",
+      "name": "Industrial Processes Emissions by Country (Monthly)",
+      "description": "Monthly industrial processes CO\u2082 emissions by country from 2000-2023",
+      "source": "EDGAR v2024 industrial processes",
+      "units": "tonnes CO\u2082",
+      "resolution": "country",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#ind_processes_country_month",
+      "columns": [
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "ind-processes-country-year",
+      "name": "Industrial Processes Emissions by Country (Annual)",
+      "description": "Annual industrial processes CO\u2082 emissions by country from 2000-2024",
+      "source": "EDGAR v2024 industrial processes",
+      "units": "tonnes CO\u2082",
+      "resolution": "country",
+      "temporal_coverage": "2000-2024",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#ind_processes_country_year",
+      "columns": [
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "power-admin1-month",
+      "name": "Power Industry Emissions by Admin1 (Monthly)",
+      "description": "Monthly power industry CO\u2082 emissions by admin1 from 2000-2023",
+      "source": "EDGAR v2024 power industry",
+      "units": "tonnes CO\u2082",
+      "resolution": "admin1",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#power_admin1_month",
+      "columns": [
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "admin1_geoid",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 GeoID"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        }
+      ]
+    },
+    {
+      "file_id": "power-admin1-year",
+      "name": "Power Industry Emissions by Admin1 (Annual)",
+      "description": "Annual power industry CO\u2082 emissions by administrative level 1 from 2000-2023",
+      "source": "EDGAR v2024 power industry",
+      "units": "tonnes CO\u2082",
+      "resolution": "admin1",
+      "temporal_coverage": "2000-2023",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#power_admin1_year",
+      "columns": [
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "admin1_geoid",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 GeoID"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        }
+      ]
+    },
+    {
+      "file_id": "power-city-month",
+      "name": "Power Industry Emissions by City (Monthly)",
+      "description": "Monthly power industry CO\u2082 emissions by city from 2000-2023",
+      "source": "EDGAR v2024 power industry",
+      "units": "tonnes CO\u2082",
+      "resolution": "city",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#power_city_month",
+      "columns": [
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "city_name",
+          "type": "VARCHAR",
+          "description": "City name"
+        },
+        {
+          "name": "city_id",
+          "type": "VARCHAR",
+          "description": "City ID"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        }
+      ]
+    },
+    {
+      "file_id": "power-city-year",
+      "name": "Power Industry Emissions by City (Annual)",
+      "description": "Annual power industry CO\u2082 emissions by city from 2000-2023",
+      "source": "EDGAR v2024 power industry",
+      "units": "tonnes CO\u2082",
+      "resolution": "city",
+      "temporal_coverage": "2000-2023",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#power_city_year",
+      "columns": [
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "city_name",
+          "type": "VARCHAR",
+          "description": "City name"
+        },
+        {
+          "name": "city_id",
+          "type": "VARCHAR",
+          "description": "City ID"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        }
+      ]
+    },
+    {
+      "file_id": "power-country-month",
+      "name": "Power Industry Emissions by Country (Monthly)",
+      "description": "Monthly power industry CO\u2082 emissions by country from 2000-2023",
+      "source": "EDGAR v2024 power industry",
+      "units": "tonnes CO\u2082",
+      "resolution": "country",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#power_country_month",
+      "columns": [
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        }
+      ]
+    },
+    {
+      "file_id": "power-country-year",
+      "name": "Power Industry Emissions by Country (Annual)",
+      "description": "Annual power industry CO\u2082 emissions by country from 2000-2023",
+      "source": "EDGAR v2024 power industry",
+      "units": "tonnes CO\u2082",
+      "resolution": "country",
+      "temporal_coverage": "2000-2023",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#power_country_year",
+      "columns": [
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        }
+      ]
+    },
+    {
+      "file_id": "transport-admin1-month",
+      "name": "Transport Emissions by Admin1 (Monthly)",
+      "description": "Monthly transport CO\u2082 emissions by admin1 from 2000-2023",
+      "source": "EDGAR v2024 transport",
+      "units": "tonnes CO\u2082",
+      "resolution": "admin1",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#transport_admin1_month",
+      "columns": [
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "admin1_geoid",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 GeoID"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        }
+      ]
+    },
+    {
+      "file_id": "transport-admin1-year",
+      "name": "Transport Emissions by Admin1 (Annual)",
+      "description": "Annual transport CO\u2082 emissions by administrative level 1 from 2000-2023",
+      "source": "EDGAR v2024 transport",
+      "units": "tonnes CO\u2082",
+      "resolution": "admin1",
+      "temporal_coverage": "2000-2023",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#transport_admin1_year",
+      "columns": [
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "admin1_geoid",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 GeoID"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        }
+      ]
+    },
+    {
+      "file_id": "transport-city-month",
+      "name": "Transport Emissions by City (Monthly)",
+      "description": "Monthly transport CO\u2082 emissions by city from 2000-2023",
+      "source": "EDGAR v2024 transport",
+      "units": "tonnes CO\u2082",
+      "resolution": "city",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#transport_city_month",
+      "columns": [
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "city_name",
+          "type": "VARCHAR",
+          "description": "City name"
+        },
+        {
+          "name": "city_id",
+          "type": "VARCHAR",
+          "description": "City ID"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        }
+      ]
+    },
+    {
+      "file_id": "transport-city-year",
+      "name": "Transport Emissions by City (Annual)",
+      "description": "Annual transport CO\u2082 emissions by city from 2000-2023 (expanded with major global cities)",
+      "source": "EDGAR v2024 transport",
+      "units": "tonnes CO\u2082",
+      "resolution": "city",
+      "temporal_coverage": "2000-2023",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#transport_city_year",
+      "columns": [
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "city_name",
+          "type": "VARCHAR",
+          "description": "City name"
+        },
+        {
+          "name": "city_id",
+          "type": "VARCHAR",
+          "description": "City ID"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        }
+      ]
+    },
+    {
+      "file_id": "transport-country-month",
+      "name": "Transport Emissions by Country (Monthly)",
+      "description": "Monthly transport CO\u2082 emissions by country from 2000-2023",
+      "source": "EDGAR v2024 transport",
+      "units": "tonnes CO\u2082",
+      "resolution": "country",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#transport_country_month",
+      "columns": [
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        }
+      ]
+    },
+    {
+      "file_id": "transport-country-year",
+      "name": "Transport Emissions by Country (Annual)",
+      "description": "Annual transport CO\u2082 emissions by country from 2000-2023",
+      "source": "EDGAR v2024 transport",
+      "units": "tonnes CO\u2082",
+      "resolution": "country",
+      "temporal_coverage": "2000-2023",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#transport_country_year",
+      "columns": [
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        }
+      ]
+    },
+    {
+      "file_id": "waste-admin1-month",
+      "name": "Waste Emissions by Admin1 (Monthly)",
+      "description": "Monthly waste CO\u2082 emissions by admin1 from 2000-2023",
+      "source": "EDGAR v2024 waste",
+      "units": "tonnes CO\u2082",
+      "resolution": "admin1",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#waste_admin1_month",
+      "columns": [
+        {
+          "name": "admin1_geoid",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 GeoID"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "waste-admin1-year",
+      "name": "Waste Emissions by Admin1 (Annual)",
+      "description": "Annual waste CO\u2082 emissions by administrative level 1 from 2000-2024",
+      "source": "EDGAR v2024 waste",
+      "units": "tonnes CO\u2082",
+      "resolution": "admin1",
+      "temporal_coverage": "2000-2024",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#waste_admin1_year",
+      "columns": [
+        {
+          "name": "admin1_geoid",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 GeoID"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "waste-city-month",
+      "name": "Waste Emissions by City (Monthly)",
+      "description": "Monthly waste CO\u2082 emissions by city from 2000-2023",
+      "source": "EDGAR v2024 waste",
+      "units": "tonnes CO\u2082",
+      "resolution": "city",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#waste_city_month",
+      "columns": [
+        {
+          "name": "city_id",
+          "type": "VARCHAR",
+          "description": "City ID"
+        },
+        {
+          "name": "city_name",
+          "type": "VARCHAR",
+          "description": "City name"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "waste-city-year",
+      "name": "Waste Emissions by City (Annual)",
+      "description": "Annual waste CO\u2082 emissions by city from 2000-2024",
+      "source": "EDGAR v2024 waste",
+      "units": "tonnes CO\u2082",
+      "resolution": "city",
+      "temporal_coverage": "2000-2024",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#waste_city_year",
+      "columns": [
+        {
+          "name": "city_id",
+          "type": "VARCHAR",
+          "description": "City ID"
+        },
+        {
+          "name": "city_name",
+          "type": "VARCHAR",
+          "description": "City name"
+        },
+        {
+          "name": "admin1_name",
+          "type": "VARCHAR",
+          "description": "Administrative level 1 name"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "waste-country-month",
+      "name": "Waste Emissions by Country (Monthly)",
+      "description": "Monthly waste CO\u2082 emissions by country from 2000-2023",
+      "source": "EDGAR v2024 waste",
+      "units": "tonnes CO\u2082",
+      "resolution": "country",
+      "temporal_coverage": "2000-2023 (monthly)",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#waste_country_month",
+      "columns": [
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "month",
+          "type": "INTEGER",
+          "description": "Month (1-12)"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    },
+    {
+      "file_id": "waste-country-year",
+      "name": "Waste Emissions by Country (Annual)",
+      "description": "Annual waste CO\u2082 emissions by country from 2000-2024",
+      "source": "EDGAR v2024 waste",
+      "units": "tonnes CO\u2082",
+      "resolution": "country",
+      "temporal_coverage": "2000-2024",
+      "engine": "duckdb",
+      "path": "duckdb://data/warehouse/climategpt.duckdb#waste_country_year",
+      "columns": [
+        {
+          "name": "iso3",
+          "type": "VARCHAR",
+          "description": "ISO3 country code"
+        },
+        {
+          "name": "country_name",
+          "type": "VARCHAR",
+          "description": "Country name"
+        },
+        {
+          "name": "year",
+          "type": "INTEGER",
+          "description": "Year"
+        },
+        {
+          "name": "emissions_tonnes",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in tonnes"
+        },
+        {
+          "name": "MtCO2",
+          "type": "DOUBLE",
+          "description": "CO\u2082 emissions in million tonnes"
+        },
+        {
+          "name": "units",
+          "type": "VARCHAR",
+          "description": "Units of measurement"
+        },
+        {
+          "name": "source",
+          "type": "VARCHAR",
+          "description": "Data source"
+        },
+        {
+          "name": "spatial_res",
+          "type": "VARCHAR",
+          "description": "Spatial resolution"
+        },
+        {
+          "name": "temporal_res",
+          "type": "VARCHAR",
+          "description": "Temporal resolution"
+        }
+      ]
+    }
+  ]
+}

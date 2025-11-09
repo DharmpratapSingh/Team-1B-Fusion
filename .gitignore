@@ -1,0 +1,144 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Documentation (keep docs/ directory committed)
+
+# Logs and run artifacts
+logs/
+*.log
+
+# Generated reports/results at repo root
+/*.json
+/comprehensive_test_results/
+/test_reports/
+/test_results/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Large data artifacts
+data/warehouse/*.duckdb
+
+# Misc generated files
+_readme.html
+
+# ----------------------------
+# Python cache / build files
+# ----------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.dll
+*.log
+*.tmp
+*.pid
+*.pid.lock
+
+# Build / distribution
+build/
+dist/
+wheels/
+*.egg-info/
+.eggs/
+*.manifest
+*.spec
+
+# ----------------------------
+# Virtual environments
+# ----------------------------
+.venv/
+venv/
+ven1/
+env/
+ENV/
+
+# ----------------------------
+# Environment variables & secrets
+# ----------------------------
+.env
+.env.*
+*.key
+*.pem
+*.crt
+
+# ----------------------------
+# IDE / Editor settings
+# ----------------------------
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ----------------------------
+# Docker / Containers
+# ----------------------------
+docker-compose.override.yml
+*.log
+*.pid
+*.seed
+*.pid.lock
+
+# ----------------------------
+# Data files (large datasets)
+# ----------------------------
+data/raw/
+data/curated/*
+!data/curated/manifest*.json
+data/csv_datasets/
+data/geo/
+data/warehouse/
+bkl_*/
+*.nc
+*.zip
+*.tar
+*.tar.gz
+
+# Generated output files (images, CSVs at root)
+# ----------------------------
+/*.png
+/*.csv
+*.png
+output*.png
+
+# ----------------------------
+# Local test artifacts
+# ----------------------------
+.DS_Store
+*.db
+notebooks/.ipynb_checkpoints/
+__snapshots__/
+*.bak
+
+# ----------------------------
+# Output / Reports / Cache
+# ----------------------------
+outputs/
+reports/
+cache/
+logs/
+*.sqlite3
+coverage/
+*.coverage
+*.pytest_cache/
+.pytest_cache/
+
+# ----------------------------
+# uv / dependency management
+# ----------------------------
+.uv/
+.pytype/
+.mypy_cache/
+.dmypy.json
+.typing/
+.pdm.toml
+
+# ----------------------------
+# Streamlit & FastAPI runs
+# ----------------------------
+.streamlit/
+*.mp4
+*.webm

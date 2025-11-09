@@ -1,0 +1,51 @@
+id,category,sector,level,grain,difficulty,question,expected_location,expected_year,notes
+1,simple,transport,country,year,easy,"What were Germany's transportation sector emissions in 2023?",Germany,2023,Basic country-level query
+2,simple,transport,admin1,year,easy,"How much CO2 did California emit from transportation in 2022?",California,2022,Admin1 level (US state)
+3,simple,transport,city,year,easy,"Show me transportation emissions for Tokyo in 2021.",Tokyo,2021,City-level query
+4,temporal,transport,country,month,medium,"What were USA's monthly transportation emissions for each month in 2023?",United States of America,2023,Monthly temporal grain
+5,comparative,transport,country,year,medium,"Compare transportation emissions between USA and China in 2022.",USA|China,2022,Multi-country comparison
+6,temporal,transport,country,year,medium,"Calculate the year-over-year change in transportation emissions for India from 2021 to 2022.",India,2021-2022,YoY calculation
+7,simple,power,country,year,easy,"What were the power sector emissions for France in 2023?",France,2023,Basic country-level query
+8,simple,power,admin1,year,easy,"How much did Texas emit from power generation in 2022?",Texas,2022,Admin1 level (US state)
+9,simple,power,city,year,easy,"Show me power sector emissions for London in 2021.",London,2021,City-level query
+10,temporal,power,country,month,medium,"What were China's monthly power emissions in January through June 2023?",China,2023,Partial year monthly data
+11,comparative,power,admin1,year,medium,"Which US state had the highest power sector emissions in 2022?",USA (all states),2022,Ranking query - admin1
+12,temporal,power,country,year,medium,"Show the trend in Germany's power sector emissions from 2020 to 2023.",Germany,2020-2023,Multi-year trend
+13,simple,waste,country,year,easy,"What were Japan's waste sector emissions in 2022?",Japan,2022,Basic country-level query
+14,simple,waste,admin1,year,easy,"How much waste-related CO2 did Ontario emit in 2021?",Ontario,2021,Admin1 level (Canadian province)
+15,simple,waste,city,year,easy,"What are the waste emissions for Mumbai in 2023?",Mumbai,2023,City-level query
+16,temporal,waste,country,month,medium,"Show me Brazil's monthly waste emissions for 2023.",Brazil,2023,Full year monthly data
+17,comparative,waste,city,year,medium,"Compare waste emissions between New York City and Los Angeles in 2022.",New York City|Los Angeles,2022,Multi-city comparison
+18,temporal,waste,country,year,medium,"Calculate the percentage change in UK's waste emissions from 2020 to 2023.",United Kingdom,2020-2023,Percentage change calculation
+19,simple,agriculture,country,year,easy,"What were India's agricultural emissions in 2022?",India,2022,Basic country-level query
+20,simple,agriculture,admin1,year,easy,"How much CO2 did Iowa emit from agriculture in 2023?",Iowa,2023,Admin1 level (US state)
+21,simple,agriculture,city,year,easy,"Show agricultural emissions for São Paulo in 2021.",São Paulo,2021,City-level with special character
+22,temporal,agriculture,country,month,medium,"What were Australia's monthly agricultural emissions in 2023?",Australia,2023,Full year monthly data
+23,comparative,agriculture,country,year,hard,"Rank the top 5 countries by agricultural emissions in 2022.",All countries,2022,Top-N ranking query
+24,temporal,agriculture,admin1,year,medium,"Show the trend in agricultural emissions for California from 2019 to 2023.",California,2019-2023,Multi-year trend
+25,simple,buildings,country,year,easy,"What were Canada's building sector emissions in 2023?",Canada,2023,Basic country-level query
+26,simple,buildings,admin1,year,easy,"How much did New York state emit from buildings in 2022?",New York,2022,Admin1 level (US state)
+27,simple,buildings,city,year,easy,"Show building emissions for Paris in 2021.",Paris,2021,City-level query
+28,temporal,buildings,country,month,medium,"What were UK's monthly building emissions for Q4 2023 (October, November, December)?",United Kingdom,2023,Quarterly subset monthly
+29,comparative,buildings,city,year,medium,"Compare building sector emissions between Chicago and Houston in 2022.",Chicago|Houston,2022,Multi-city comparison
+30,temporal,buildings,country,year,medium,"Calculate year-over-year change in building emissions for Germany from 2021 to 2022.",Germany,2021-2022,YoY calculation
+31,simple,fuel-exploitation,country,year,easy,"What were Russia's fuel exploitation emissions in 2022?",Russia,2022,Basic country-level query
+32,simple,fuel-exploitation,admin1,year,easy,"How much CO2 did Alberta emit from fuel exploitation in 2023?",Alberta,2023,Admin1 level (Canadian province)
+33,temporal,fuel-exploitation,country,month,medium,"Show monthly fuel exploitation emissions for Saudi Arabia in 2023.",Saudi Arabia,2023,Full year monthly data
+34,comparative,fuel-exploitation,country,year,medium,"Compare fuel exploitation emissions between USA, Russia, and Saudi Arabia in 2022.",USA|Russia|Saudi Arabia,2022,Multi-country comparison (3)
+35,temporal,fuel-exploitation,country,year,medium,"What's the trend in fuel exploitation emissions for Norway from 2020 to 2023?",Norway,2020-2023,Multi-year trend
+36,simple,fuel-exploitation,city,year,easy,"Show fuel exploitation emissions for Houston in 2022.",Houston,2022,City-level query
+37,simple,industrial-combustion,country,year,easy,"What were China's industrial combustion emissions in 2023?",China,2023,Basic country-level query
+38,simple,industrial-combustion,admin1,year,easy,"How much did Pennsylvania emit from industrial combustion in 2022?",Pennsylvania,2022,Admin1 level (US state)
+39,simple,industrial-combustion,city,year,easy,"Show industrial combustion emissions for Shanghai in 2021.",Shanghai,2021,City-level query
+40,temporal,industrial-combustion,country,month,medium,"What were India's monthly industrial combustion emissions for the first quarter of 2023?",India,2023,Quarterly subset monthly
+41,comparative,industrial-combustion,admin1,year,medium,"Which state in the USA had the highest industrial combustion emissions in 2022?",USA (all states),2022,Ranking query - admin1
+42,temporal,industrial-combustion,country,year,medium,"Show the trend in industrial combustion emissions for Japan from 2019 to 2023.",Japan,2019-2023,Multi-year trend
+43,simple,industrial-processes,country,year,easy,"What were South Korea's industrial processes emissions in 2022?",South Korea,2022,Basic country-level query
+44,simple,industrial-processes,admin1,year,easy,"How much did Michigan emit from industrial processes in 2023?",Michigan,2023,Admin1 level (US state)
+45,simple,industrial-processes,city,year,easy,"Show industrial processes emissions for Seoul in 2021.",Seoul,2021,City-level query
+46,temporal,industrial-processes,country,month,medium,"What were Mexico's monthly industrial processes emissions in 2023?",Mexico,2023,Full year monthly data
+47,comparative,industrial-processes,country,year,medium,"Compare industrial processes emissions between Germany, France, and Italy in 2022.",Germany|France|Italy,2022,Multi-country comparison (3)
+48,complex,multiple,country,year,hard,"What are the total emissions from all sectors for Germany in 2023?",Germany,2023,Cross-sector aggregation
+49,complex,multiple,country,year,hard,"Which sector contributed the most emissions in the United States in 2022?",United States of America,2022,Sector ranking within country
+50,complex,multiple,admin1,month,hard,"Compare monthly power and transport emissions for California in 2023 and tell me which sector was higher on average.",California,2023,Multi-sector monthly comparison
