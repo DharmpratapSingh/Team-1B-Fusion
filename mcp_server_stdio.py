@@ -8,8 +8,13 @@ import calendar
 import json
 import logging
 import os
+import re
+import time
+import hashlib
+import uuid
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, Dict, List, Tuple, Set
+from datetime import datetime, timedelta
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import (
@@ -24,13 +29,67 @@ from mcp.types import (
 import duckdb
 from functools import lru_cache
 import threading
+from queue import Queue, Empty, Full
+from contextlib import contextmanager
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger("climategpt")
+# ---------------------------------------------------------------------
+# Logging Infrastructure (from mcp_server.py)
+# ---------------------------------------------------------------------
+def _setup_logging():
+    """Setup structured logging with JSON format for production."""
+    log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+    log_format = os.getenv("LOG_FORMAT", "json")  # "json" or "text"
+
+    # Create logger
+    logger = logging.getLogger("climategpt_mcp")
+    logger.setLevel(getattr(logging, log_level, logging.INFO))
+
+    # Remove existing handlers
+    logger.handlers.clear()
+
+    # Create formatter
+    if log_format == "json":
+        class JSONFormatter(logging.Formatter):
+            def format(self, record):
+                log_entry = {
+                    "timestamp": datetime.utcnow().isoformat() + "Z",
+                    "level": record.levelname,
+                    "logger": record.name,
+                    "message": record.getMessage(),
+                    "module": record.module,
+                    "function": record.funcName,
+                    "line": record.lineno,
+                }
+                if hasattr(record, "request_id"):
+                    log_entry["request_id"] = record.request_id
+                if hasattr(record, "query_context"):
+                    log_entry["query_context"] = record.query_context
+                if record.exc_info:
+                    log_entry["exception"] = self.formatException(record.exc_info)
+                return json.dumps(log_entry)
+
+        formatter = JSONFormatter()
+    else:
+        formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
+
+    # Console handler
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+
+    # File handler (optional)
+    log_file = os.getenv("LOG_FILE")
+    if log_file:
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+
+    return logger
+
+logger = _setup_logging()
 
 # Initialize MCP server
 app = Server("climategpt")
@@ -64,9 +123,235 @@ if first_file and first_file.get("path", "").startswith("duckdb://"):
 else:
     DB_PATH = _resolve_db_path("data/warehouse/climategpt.duckdb")
 
-# Connection pooling for DuckDB
-from queue import Queue, Empty, Full
-from contextlib import contextmanager
+# ---------------------------------------------------------------------
+# Security and Input Validation (from mcp_server.py)
+# ---------------------------------------------------------------------
+# Project root for path resolution
+_PROJECT_ROOT = Path(__file__).parent
+
+# Valid characters for identifiers (file_id, column names)
+_IDENTIFIER_PATTERN = re.compile(r'^[a-zA-Z0-9_\-\.]+$')
+_MAX_QUERY_COMPLEXITY = {
+    "max_columns": 50,
+    "max_filters": 20,
+    "max_list_items": 100,
+    "max_string_length": 500,
+    "max_query_size": 10000,  # bytes
+}
+
+# Config defaults (env-driven)
+ASSIST_DEFAULT = os.getenv("ASSIST_DEFAULT", "true").lower() == "true"
+PROXY_DEFAULT = os.getenv("PROXY_DEFAULT", "false").lower() == "true"
+PROXY_MAX_K_DEFAULT = int(os.getenv("PROXY_MAX_K", "3") or 3)
+PROXY_RADIUS_KM_DEFAULT = int(os.getenv("PROXY_RADIUS_KM", "150") or 150)
+
+# ---------------------------------------------------------------------
+# File ID resolver (for future alias support)
+# ---------------------------------------------------------------------
+def _resolve_file_id(fid: str) -> str:
+    """Resolve file_id, potentially applying aliases in the future."""
+    # Aliases removed - they referenced non-existent .expanded datasets
+    # Keep function for future alias support if needed
+    return fid
+
+# ---------------------------------------------------------------------
+# Enhanced Validation Functions (from mcp_server.py)
+# ---------------------------------------------------------------------
+def _validate_file_id_enhanced(file_id: str) -> Tuple[bool, Optional[str]]:
+    """Validate file_id format and prevent path traversal."""
+    if not file_id or not isinstance(file_id, str):
+        return False, "file_id must be a non-empty string"
+
+    if len(file_id) > 200:
+        return False, "file_id too long (max 200 characters)"
+
+    # Prevent path traversal
+    if '..' in file_id or '/' in file_id or '\\' in file_id:
+        return False, "file_id contains invalid characters"
+
+    # Check for valid identifier pattern
+    if not _IDENTIFIER_PATTERN.match(file_id):
+        return False, "file_id contains invalid characters (only alphanumeric, _, -, . allowed)"
+
+    return True, None
+
+
+def _validate_column_name_enhanced(col: str) -> Tuple[bool, Optional[str]]:
+    """Validate column name to prevent SQL injection."""
+    if not col or not isinstance(col, str):
+        return False, "Column name must be a non-empty string"
+
+    if len(col) > 100:
+        return False, "Column name too long (max 100 characters)"
+
+    # Whitelist approach - only allow safe characters
+    if not _IDENTIFIER_PATTERN.match(col):
+        return False, "Column name contains invalid characters"
+
+    # Prevent SQL keywords (basic check)
+    sql_keywords = {'select', 'from', 'where', 'insert', 'update', 'delete',
+                    'drop', 'create', 'alter', 'exec', 'execute', 'union'}
+    if col.lower() in sql_keywords:
+        return False, f"Column name cannot be SQL keyword: {col}"
+
+    return True, None
+
+
+def _validate_filter_value(value: Any, filter_type: str) -> Tuple[bool, Optional[str]]:
+    """Validate filter values for safety and size limits."""
+    if filter_type == "list" and isinstance(value, list):
+        if len(value) > _MAX_QUERY_COMPLEXITY["max_list_items"]:
+            return False, f"Filter list too large (max {_MAX_QUERY_COMPLEXITY['max_list_items']} items)"
+        for item in value:
+            if isinstance(item, str) and len(item) > _MAX_QUERY_COMPLEXITY["max_string_length"]:
+                return False, f"Filter list item too long (max {_MAX_QUERY_COMPLEXITY['max_string_length']} chars)"
+
+    if isinstance(value, str):
+        if len(value) > _MAX_QUERY_COMPLEXITY["max_string_length"]:
+            return False, f"Filter value too long (max {_MAX_QUERY_COMPLEXITY['max_string_length']} chars)"
+        # Check for potential injection patterns
+        if re.search(r'[;\'"\\]', value):
+            return False, "Filter value contains potentially dangerous characters"
+
+    return True, None
+
+
+# ---------------------------------------------------------------------
+# Error handling helpers (from mcp_server.py)
+# ---------------------------------------------------------------------
+def _parse_duckdb_column_error(error_str: str) -> Optional[Tuple[List[str], List[str]]]:
+    """
+    Parse DuckDB error to detect invalid column errors.
+    Returns (bad_columns, candidate_columns) if it's a column error, None otherwise.
+
+    Example: "Binder Error: Referenced column \"x\" not found...\nCandidate bindings: \"a\", \"b\""
+    """
+    error_lower = error_str.lower()
+
+    # Check if it's a column not found error
+    if "referenced column" not in error_lower or "not found" not in error_lower:
+        return None
+
+    # Extract column names from error message
+    # Find quoted column names (the ones that don't exist)
+    missing_pattern = r'Referenced column\s+"([^"]+)"'
+    missing_match = re.search(missing_pattern, error_str, re.IGNORECASE)
+    if not missing_match:
+        return None
+
+    bad_columns = [missing_match.group(1)]
+
+    # Extract candidate bindings
+    candidate_pattern = r'Candidate bindings:\s*"([^"]+)"(?:\s*,\s*"([^"]+)")*'
+    candidate_match = re.search(candidate_pattern, error_str)
+    candidate_columns = []
+    if candidate_match:
+        # Get all quoted values after "Candidate bindings:"
+        all_matches = re.findall(r'"([^"]+)"', error_str[error_str.find("Candidate bindings:"):])
+        candidate_columns = all_matches if all_matches else []
+
+    return bad_columns, candidate_columns
+
+
+def _error_response(code: str, detail: str, hint: Optional[str] = None,
+                   context: Optional[Dict[str, Any]] = None,
+                   suggestions: Optional[List[str]] = None) -> Dict[str, Any]:
+    """
+    Create a standardized error response with enhanced context.
+
+    Args:
+        code: Error code (e.g., "file_not_found", "read_failed")
+        detail: Detailed error message
+        hint: Optional hint for resolving the error
+        context: Additional context about the error
+        suggestions: List of suggested actions
+
+    Returns:
+        Standardized error dict
+    """
+    response: Dict[str, Any] = {
+        "error": code,
+        "detail": detail,
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+    }
+    if hint:
+        response["hint"] = hint
+    if context:
+        response["context"] = context
+    if suggestions:
+        response["suggestions"] = suggestions
+
+    return response
+
+
+# ---------------------------------------------------------------------
+# Query Validation and Intent Detection (from mcp_server.py)
+# ---------------------------------------------------------------------
+def _parse_temporal_coverage(coverage_str: str) -> Optional[Tuple[int, int]]:
+    """Parse temporal coverage string like '2000-2023' into (start, end)."""
+    if not coverage_str or '-' not in coverage_str:
+        return None
+    try:
+        parts = coverage_str.split('-')
+        if len(parts) == 2:
+            return (int(parts[0]), int(parts[1]))
+    except (ValueError, IndexError):
+        pass
+    return None
+
+
+def _validate_query_complexity(
+    select: List[str],
+    where: Dict[str, Any],
+    group_by: List[str],
+    order_by: Optional[str] = None
+) -> Tuple[bool, Optional[str], Optional[Dict[str, Any]]]:
+    """Validate query complexity to prevent DoS."""
+    issues = []
+
+    # Check column count
+    if len(select) > _MAX_QUERY_COMPLEXITY["max_columns"]:
+        issues.append(f"Too many columns in select (max {_MAX_QUERY_COMPLEXITY['max_columns']})")
+
+    # Check filter count
+    if len(where) > _MAX_QUERY_COMPLEXITY["max_filters"]:
+        issues.append(f"Too many filters (max {_MAX_QUERY_COMPLEXITY['max_filters']})")
+
+    # Check group_by count
+    if len(group_by) > _MAX_QUERY_COMPLEXITY["max_columns"]:
+        issues.append(f"Too many group_by columns (max {_MAX_QUERY_COMPLEXITY['max_columns']})")
+
+    # Validate all column names
+    all_columns = set(select) | set(group_by)
+    if order_by:
+        order_col = order_by.split()[0]
+        all_columns.add(order_col)
+
+    for col in all_columns:
+        valid, error = _validate_column_name_enhanced(col)
+        if not valid:
+            issues.append(f"Invalid column name '{col}': {error}")
+
+    # Validate filter values
+    for key, value in where.items():
+        if isinstance(value, dict):
+            if "in" in value and isinstance(value["in"], list):
+                valid, error = _validate_filter_value(value["in"], "list")
+                if not valid:
+                    issues.append(f"Invalid filter value for '{key}': {error}")
+        else:
+            valid, error = _validate_filter_value(value, "single")
+            if not valid:
+                issues.append(f"Invalid filter value for '{key}': {error}")
+
+    if issues:
+        return False, "; ".join(issues), {
+            "max_columns": _MAX_QUERY_COMPLEXITY["max_columns"],
+            "max_filters": _MAX_QUERY_COMPLEXITY["max_filters"],
+        }
+
+    return True, None, None
+
 
 class DuckDBConnectionPool:
     """
@@ -225,12 +510,8 @@ def _get_db_connection():
 # ========================================
 
 def _validate_file_id(file_id: str) -> tuple[bool, Optional[str]]:
-    """Validate file_id format"""
-    if not file_id or len(file_id) > 200:
-        return False, "file_id must be 1-200 characters"
-    if "/" in file_id or ".." in file_id:
-        return False, "file_id cannot contain '/' or '..'"
-    return True, None
+    """Validate file_id format - calls enhanced version"""
+    return _validate_file_id_enhanced(file_id)
 
 def _find_file_meta(file_id: str):
     """Find file metadata in manifest"""
@@ -286,11 +567,13 @@ def _build_where_sql(where: dict[str, Any]) -> tuple[str, list]:
 
 def _validate_column_name(column: str, file_meta: dict) -> tuple[bool, Optional[str]]:
     """Validate column name exists in dataset schema (prevents SQL injection)"""
-    if not column:
-        return False, "column name required"
+    # First, do security validation
+    valid, error = _validate_column_name_enhanced(column)
+    if not valid:
+        return False, error
 
+    # Then check against schema
     valid_columns = [col["name"] for col in file_meta.get("columns", [])]
-
     if column not in valid_columns:
         return False, f"Invalid column '{column}'. Valid columns: {', '.join(valid_columns[:10])}"
 
