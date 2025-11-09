@@ -693,6 +693,112 @@ def _top_matches(name: str, pool: List[str], k: int = 5) -> List[str]:
     return [p for p, _, _ in scored[:k]]
 
 
+# ---------------------------------------------------------------------
+# Phase 2 & 4: Remaining Validation and Data Handling
+# ---------------------------------------------------------------------
+
+def _get_file_meta(file_id: str) -> Optional[Dict[str, Any]]:
+    """Get file metadata from manifest"""
+    return next((f for f in MANIFEST.get("files", []) if f.get("file_id") == file_id), None)
+
+
+def _validate_query_intent(
+    file_id: str,
+    where: Dict[str, Any],
+    select: List[str],
+    file_meta: Optional[Dict[str, Any]] = None,
+    assist: bool = True
+) -> Tuple[bool, Optional[str], Optional[Dict[str, Any]], Optional[List[str]]]:
+    """
+    Validate query and detect potential issues before execution.
+    Returns: (is_valid, warning_message, suggestions_dict, suggestions_list)
+    """
+    warnings = []
+    suggestions_dict: Dict[str, Any] = {}
+    suggestions_list: List[str] = []
+
+    if not file_meta:
+        return False, "File metadata not found", None, ["Check available datasets"]
+
+    # Check temporal coverage
+    if "year" in where:
+        year_val = where["year"]
+        if isinstance(year_val, int):
+            temporal = file_meta.get("temporal_coverage", "")
+            coverage = _parse_temporal_coverage(temporal)
+            if coverage:
+                start, end = coverage
+                if year_val < start or year_val > end:
+                    warnings.append(f"Year {year_val} outside dataset coverage ({start}-{end})")
+                    # Suggest nearest available year
+                    nearest = max(start, min(end, year_val))
+                    suggestions_dict["nearest_year"] = nearest
+                    suggestions_list.append(f"Try year {nearest} (dataset covers {start}-{end})")
+
+    # Check spatial coverage for city queries
+    if "city" in file_id and "country_name" in where:
+        country = where.get("country_name")
+        if isinstance(country, str):
+            coverage_info = _get_cities_data_coverage()
+            available = coverage_info.get("available_countries", [])
+            if country not in available:
+                warnings.append(f"City data not available for '{country}'")
+                suggestions_dict.update(_get_cities_suggestions(country))
+                suggestions_list.extend([
+                    f"City data available for: {', '.join(available[:5])}",
+                    "Try querying at country or admin1 level instead"
+                ])
+
+    # Check for ambiguous filters
+    if not where and assist:
+        warnings.append("No filters specified - returning sample data")
+        suggestions_list.append("Add filters like 'year' or 'country_name' to narrow results")
+
+    # Check if select columns exist in manifest
+    if file_meta.get("columns") and select:
+        manifest_cols = {col.get("name") for col in file_meta.get("columns", []) if isinstance(col, dict)}
+        missing_cols = [c for c in select if c not in manifest_cols]
+        if missing_cols:
+            warnings.append(f"Some requested columns may not exist: {missing_cols}")
+            suggestions_list.append(f"Available columns: {', '.join(sorted(manifest_cols)[:10])}...")
+
+    warning_msg = "; ".join(warnings) if warnings else None
+    return True, warning_msg, suggestions_dict if suggestions_dict else None, suggestions_list if suggestions_list else None
+
+
+def _detect_query_patterns(
+    where: Dict[str, Any],
+    group_by: List[str],
+    order_by: Optional[str],
+    limit: Optional[int]
+) -> Dict[str, Any]:
+    """Detect query patterns to provide better suggestions."""
+    patterns = {
+        "is_top_n": False,
+        "is_comparison": False,
+        "is_trend": False,
+        "has_temporal_filter": "year" in where or "month" in where,
+        "has_spatial_filter": any(k in where for k in ["country_name", "admin1_name", "city_name"]),
+        "needs_aggregation": bool(group_by),
+    }
+
+    # Detect top N pattern
+    if order_by and "DESC" in order_by.upper():
+        if limit and limit <= 20:
+            patterns["is_top_n"] = True
+
+    # Detect comparison pattern
+    if "year" in where and isinstance(where["year"], dict) and "in" in where["year"]:
+        if len(where["year"]["in"]) == 2:
+            patterns["is_comparison"] = True
+
+    # Detect trend pattern
+    if "year" in where or (group_by and "year" in group_by):
+        patterns["is_trend"] = True
+
+    return patterns
+
+
 class DuckDBConnectionPool:
     """
     Thread-safe connection pool for DuckDB connections.
@@ -854,11 +960,8 @@ def _validate_file_id(file_id: str) -> tuple[bool, Optional[str]]:
     return _validate_file_id_enhanced(file_id)
 
 def _find_file_meta(file_id: str):
-    """Find file metadata in manifest"""
-    for f in MANIFEST.get("files", []):
-        if f.get("file_id") == file_id:
-            return f
-    return None
+    """Find file metadata in manifest - calls _get_file_meta"""
+    return _get_file_meta(file_id)
 
 def _get_table_name(file_meta: dict) -> Optional[str]:
     """Extract table name from file metadata"""
